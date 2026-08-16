@@ -51,7 +51,6 @@ export function StoreStatus() {
 
   return (
     <span className={`store-status ${status?.open ? "is-open" : ""}`} aria-live="polite">
-      <span className="status-dot" aria-hidden="true" />
       {status?.label ?? "Checking today's hours"}
     </span>
   );

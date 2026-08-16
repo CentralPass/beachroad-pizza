@@ -1,18 +1,6 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import { Shell } from "./components/Shell";
-
-const display = Bebas_Neue({
-  variable: "--font-display",
-  weight: "400",
-  subsets: ["latin"],
-});
-
-const body = Source_Sans_3({
-  variable: "--font-body",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://beachroadpizza.com.au"),
@@ -21,7 +9,7 @@ export const metadata: Metadata = {
     template: "%s | Beach Road Pizza",
   },
   description:
-    "Great pizzas, great prices, for a great community. Explore Beach Road Pizza's menu, catering and local story in Christies Beach.",
+    "Great pizzas, great prices, for a great community. Explore Beach Road Pizza's colourful menu, catering and local story in Christies Beach.",
   icons: {
     icon: "/cursor/pizza.png",
     shortcut: "/cursor/pizza.png",
@@ -34,10 +22,10 @@ export const metadata: Metadata = {
     siteName: "Beach Road Pizza",
     images: [
       {
-        url: "/og.png",
-        width: 1728,
-        height: 921,
-        alt: "Beach Road Pizza with a spread of real pizzas, wings, chips and wedges",
+        url: "/og-v2.png",
+        width: 1734,
+        height: 907,
+        alt: "Beach Road Pizza with a bright coral message panel and a real food spread",
       },
     ],
   },
@@ -45,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Beach Road Pizza | Christies Beach",
     description: "Great pizzas, great prices, for a great community.",
-    images: ["/og.png"],
+    images: ["/og-v2.png"],
   },
 };
 
@@ -56,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-AU">
-      <body className={`${display.variable} ${body.variable}`}>
+      <body>
         <Shell>{children}</Shell>
       </body>
     </html>

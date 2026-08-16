@@ -40,7 +40,7 @@ test("server-renders the finished Beach Road Pizza homepage", async () => {
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
-test("server-renders the searchable menu with real categories and prices", async () => {
+test("server-renders the compact searchable menu with real categories, photos and prices", async () => {
   const response = await render("/menu");
   assert.equal(response.status, 200);
 
@@ -49,9 +49,10 @@ test("server-renders the searchable menu with real categories and prices", async
   assert.match(html, /Traditional pizzas/);
   assert.match(html, /Gourmet pizzas/);
   assert.match(html, /Vegan pizzas/);
-  assert.match(html, /Lamb Yiros Pizza/);
-  assert.match(html, /Penne Carbonara/);
-  assert.match(html, /Snitty Schnitzel/);
+  assert.match(html, /Cheese Lover/);
+  assert.match(html, /Beach Road Pizza_Cheesy Double\.jpg/);
+  assert.match(html, /Pastas/);
+  assert.match(html, /Schnitzels/);
   assert.match(html, /From \$13\.50/);
 });
 

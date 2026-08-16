@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { GALLERY } from "../lib/site-data";
 
 export const metadata: Metadata = {
   title: "Our story",
@@ -14,13 +13,15 @@ export default function StoryPage() {
         <div className="shell story-hero-grid">
           <div>
             <p className="eyebrow">Family owned in Christies Beach</p>
-            <h1>Built from the ground up, one local order at a time.</h1>
+            <h1>Built from the ground up, with the community beside us.</h1>
+            <p>Ten years of industry experience, one local shop and a simple promise to make every order feel worth it.</p>
           </div>
           <img
-            src="/images/food/Beach Road Pizza_Cheesy Double.jpg"
-            alt="Cheese pizza made by Beach Road Pizza"
-            width="1200"
-            height="680"
+            className="page-illustration float-food"
+            src="/images/illustrations/story-community-v2.png"
+            alt="Simple painted scene of a family business handing an order to a local customer"
+            width="1000"
+            height="1000"
             fetchPriority="high"
           />
         </div>
@@ -28,18 +29,16 @@ export default function StoryPage() {
 
       <section className="story-copy-section">
         <div className="shell story-copy-grid">
-          <p className="story-intro">
-            Beach Road Pizza is a small family business shaped by Christies Beach and the people who keep choosing local.
-          </p>
+          <p className="story-intro">Small business, big local heart.</p>
           <div className="story-prose">
             <p>
-              The owner brings more than a decade in the pizza industry and the practical knowledge that comes from working every part of it. As a first-generation immigrant, building a business meant learning from the ground up, pushing through hard seasons and staying focused on the customer in front of the counter.
+              Beach Road Pizza is a small family business shaped by Christies Beach and the people who keep choosing local. The owner brings more than a decade in the pizza industry and the practical knowledge that comes from working every part of it.
             </p>
             <p>
-              That experience now shows up in the details: generous toppings, broad vegan choice, familiar prices and a team that understands a family dinner should feel like a treat without carrying a luxury price tag.
+              As a first-generation immigrant, building the business meant starting from the ground up, pushing through hard seasons and staying focused on the customer at the counter. That experience shows in generous toppings, broad choice, familiar prices and service that makes an everyday dinner feel special.
             </p>
             <p>
-              The goal is simple. Make food people look forward to, treat customers with care and keep Beach Road Pizza connected to the community that made it possible.
+              The goal remains simple: make food people look forward to, treat customers with care and keep Beach Road Pizza connected to the community that made it possible.
             </p>
           </div>
         </div>
@@ -49,46 +48,18 @@ export default function StoryPage() {
         <div className="shell award-layout">
           <div>
             <p className="eyebrow">Voted by the community</p>
-            <h2 id="award-story-title">From finalist to local category winner.</h2>
-            <p>
-              The Onkaparinga Business Awards are decided through public voting and recognise the role local businesses play across the region.
-            </p>
+            <h2 id="award-story-title">Finalist in 2023. Winner in 2024.</h2>
+            <p>The Onkaparinga Business Awards recognise local businesses through public voting.</p>
           </div>
           <div className="award-timeline">
             <article>
               <time>2023</time>
-              <h3>Onkaparinga Business Awards finalist</h3>
-              <p>Restaurants, Bakeries and Cafés, larger business category.</p>
+              <div><h3>Onkaparinga Business Awards finalist</h3><p>Restaurants, Bakeries and Cafés, larger business category.</p></div>
             </article>
             <article>
               <time>2024</time>
-              <h3>Onkaparinga Business Award winner</h3>
-              <p>Restaurants, Bakeries and Cafés, larger business category.</p>
+              <div><h3>Onkaparinga Business Award winner</h3><p>Restaurants, Bakeries and Cafés, larger business category.</p></div>
             </article>
-          </div>
-        </div>
-      </section>
-
-      <section className="photo-archive" aria-labelledby="archive-title">
-        <div className="shell">
-          <div className="section-heading split-heading">
-            <div>
-              <p className="eyebrow">Made here</p>
-              <h2 id="archive-title">A look across the menu.</h2>
-            </div>
-            <p>Real Beach Road Pizza photography, from pizzas and wings to chips and loaded wedges.</p>
-          </div>
-          <div className="photo-grid">
-            {GALLERY.map((src, index) => (
-              <img
-                key={src}
-                src={src}
-                alt={`Beach Road Pizza menu photography ${index + 1}`}
-                width="760"
-                height="520"
-                loading="lazy"
-              />
-            ))}
           </div>
         </div>
       </section>

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { BUSINESS, CATEGORIES, MENU, type MenuCategory } from "../lib/site-data";
 
 export function MenuExplorer() {
-  const [category, setCategory] = useState<"All" | MenuCategory>("All");
+  const [category, setCategory] = useState<"All" | MenuCategory>("Traditional pizzas");
   const [query, setQuery] = useState("");
   const [veganOnly, setVeganOnly] = useState(false);
 
@@ -59,7 +59,7 @@ export function MenuExplorer() {
 
       <div className="menu-result-head">
         <div>
-          <p className="eyebrow">Local order board</p>
+          <p className="eyebrow">Choose a category</p>
           <h2 id="menu-explorer-title">{category === "All" ? "The full menu" : category}</h2>
         </div>
         <p aria-live="polite">{items.length} items</p>

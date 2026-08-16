@@ -13,24 +13,25 @@ export default function MenuPage() {
       <section className="inner-hero menu-hero">
         <div className="shell inner-hero-grid">
           <div>
-            <p className="eyebrow">The full line-up</p>
-            <h1>Find tonight's favourite.</h1>
+            <p className="eyebrow">Pizza, pasta and more</p>
+            <h1>Find tonight&apos;s favourite.</h1>
             <p>
-              Search by name or ingredient, move between categories and check size prices without opening a PDF.
+              Search by name, tap a category and check prices without opening a PDF.
             </p>
           </div>
           <img
-            src="/images/food/Beach Road Pizza_Pepporini.jpg"
-            alt="Pepperoni pizza from Beach Road Pizza"
-            width="1200"
-            height="680"
+            className="page-illustration float-food"
+            src="/images/illustrations/menu-pasta-v2.png"
+            alt="Simple painted bowl of tomato pasta"
+            width="1000"
+            height="1000"
             fetchPriority="high"
           />
         </div>
       </section>
       <div className="shell menu-page-content">
         <div className="menu-notice">
-          <strong>Prices shown are current direct-order menu prices.</strong>
+          <strong>Current direct-order menu prices.</strong>
           <span>Platform pricing, half-and-half choices, extras and gluten-free bases can change the total.</span>
         </div>
         <MenuExplorer />

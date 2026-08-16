@@ -16,14 +16,15 @@ export default function EnquirePage() {
             <p className="eyebrow">Talk to the team</p>
             <h1>Tell us what you are planning.</h1>
             <p>
-              For catering, large orders and dietary questions, a quick call is the fastest path. Use the form to organise the details first.
+              For catering, large orders and dietary questions, organise the details here before you call.
             </p>
           </div>
           <img
-            src="/images/food/Beach Road Pizza_BBQ Chicken Wings.jpg"
-            alt="BBQ chicken wings from Beach Road Pizza"
-            width="1200"
-            height="680"
+            className="page-illustration float-food"
+            src="/images/illustrations/enquiry-phone-v2.png"
+            alt="Simple painted telephone, order notepad and pencil"
+            width="1000"
+            height="1000"
             fetchPriority="high"
           />
         </div>

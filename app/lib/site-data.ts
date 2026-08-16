@@ -633,24 +633,6 @@ export const MENU: MenuItem[] = [
   },
 ];
 
-export const GALLERY = [
-  "/images/food/Header_Beach Road Pizza.jpg",
-  "/images/food/Beach Road Pizza_BBQ Chicken Wings.jpg",
-  "/images/food/Beach Road Pizza_Margherita.jpg",
-  "/images/food/Beach Road Pizza_Chips.jpg",
-  "/images/food/Beach Road Pizza_Ham & Cheese.jpg",
-  "/images/food/Beach Road Pizza_Pepporini.jpg",
-  "/images/food/Beach Road Pizza_Aussie.jpg",
-  "/images/food/Beach Road Pizza_Lamb Yiros.jpg",
-  "/images/food/Beach Road Pizza_Chicken.jpg",
-  "/images/food/Beach Road Pizza_Vegetarian.jpg",
-  "/images/food/Beach Road Pizza_Satay Chicken.jpg",
-  "/images/food/Beach Road Pizza_BBQ Meat Lovers.jpg",
-  "/images/food/Beach Road Pizza_Bacon & Wedges.jpg",
-  "/images/food/Beach Road Pizza_Cheesy Double.jpg",
-  "/images/food/Beach Road Pizza_Peri Peri Chicken.jpg",
-];
-
 export const CATEGORIES: Array<"All" | MenuCategory> = [
   "All",
   "Traditional pizzas",

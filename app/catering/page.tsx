@@ -35,7 +35,7 @@ export default function CateringPage() {
             <p className="eyebrow">Catering made local</p>
             <h1>Good food for the whole room.</h1>
             <p>
-              Tell us the headcount, timing and dietary needs. We will help you shape a practical order with plenty to go around.
+              Share the headcount, timing and dietary needs. We will help shape a practical order with plenty to go around.
             </p>
             <div className="button-row">
               <a className="button" href="/enquire?type=catering">
@@ -47,9 +47,10 @@ export default function CateringPage() {
             </div>
           </div>
           <img
-            src="/images/illustrations/menu-catering.jpg"
-            alt="Illustrated catering spread with schnitzel, pasta and pizza boxes"
-            width="2000"
+            className="page-illustration float-food"
+            src="/images/illustrations/catering-spread-v2.png"
+            alt="Simple painted catering spread with pizza boxes, schnitzel and pasta"
+            width="1000"
             height="1000"
             fetchPriority="high"
           />
@@ -60,8 +61,8 @@ export default function CateringPage() {
         <div className="shell occasion-layout">
           <div className="section-heading sticky-heading">
             <p className="eyebrow">Built around your event</p>
-            <h2>From a dozen people to a busy community room.</h2>
-            <p>Every event is quoted around the menu, group and collection plan. No invented packages and no surprise minimum hidden on this page.</p>
+            <h2>From a team lunch to a busy community room.</h2>
+            <p>Every event is planned around your menu, group and collection time.</p>
           </div>
           <div className="occasion-list">
             {occasions.map((occasion) => (
@@ -78,21 +79,21 @@ export default function CateringPage() {
         <div className="shell">
           <div className="section-heading">
             <p className="eyebrow">How to get started</p>
-            <h2>Four details make the quote useful.</h2>
+            <h2>Four details help us plan.</h2>
           </div>
           <ol>
             <li>
               <span>01</span>
               <div>
                 <h3>Date and collection time</h3>
-                <p>Share the timing early so the kitchen can advise what is realistic.</p>
+                <p>Share the timing early so the kitchen can advise what works.</p>
               </div>
             </li>
             <li>
               <span>02</span>
               <div>
                 <h3>Approximate headcount</h3>
-                <p>An honest estimate helps balance variety, portions and budget.</p>
+                <p>A clear estimate helps balance variety, portions and budget.</p>
               </div>
             </li>
             <li>
