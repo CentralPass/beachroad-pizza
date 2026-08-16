@@ -20,7 +20,7 @@ export default function EnquirePage() {
             </p>
           </div>
           <img
-            className="page-illustration float-food"
+            className="page-illustration"
             src="/images/illustrations/enquiry-phone-v2.png"
             alt="Simple painted telephone, order notepad and pencil"
             width="1000"

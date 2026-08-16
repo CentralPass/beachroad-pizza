@@ -47,7 +47,7 @@ export default function CateringPage() {
             </div>
           </div>
           <img
-            className="page-illustration float-food"
+            className="page-illustration"
             src="/images/illustrations/catering-spread-v2.png"
             alt="Simple painted catering spread with pizza boxes, schnitzel and pasta"
             width="1000"

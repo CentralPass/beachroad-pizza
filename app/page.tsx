@@ -56,21 +56,29 @@ export default function Home() {
           <div className="hero-art" aria-hidden="true">
             <img
               className="spin-food"
-              src="/images/illustrations/home-pizza-v2.png"
+              src="/images/food/Beach Road Pizza_Peri Peri Chicken.jpg"
               alt=""
-              width="1000"
-              height="1000"
+              width="1600"
+              height="900"
               fetchPriority="high"
             />
-            <p>Family owned · Community loved</p>
+            <p>Peri Peri Chicken</p>
           </div>
         </div>
       </section>
 
       <div className="motion-ticker" aria-label="Beach Road Pizza motto">
         <div className="motion-ticker-track">
-          <span>Great pizzas · Great prices · Great community ·</span>
-          <span aria-hidden="true">Great pizzas · Great prices · Great community ·</span>
+          <div className="motion-ticker-group">
+            <span>Great pizzas · Great prices · Great community ·</span>
+            <span>Great pizzas · Great prices · Great community ·</span>
+            <span>Great pizzas · Great prices · Great community ·</span>
+          </div>
+          <div className="motion-ticker-group" aria-hidden="true">
+            <span>Great pizzas · Great prices · Great community ·</span>
+            <span>Great pizzas · Great prices · Great community ·</span>
+            <span>Great pizzas · Great prices · Great community ·</span>
+          </div>
         </div>
       </div>
 
@@ -85,13 +93,38 @@ export default function Home() {
         <p>Made for sharing. Better by the beach.</p>
       </section>
 
+      <section className="video-feature video-feature-blue" aria-labelledby="cheese-pull-title">
+        <div className="shell video-feature-grid">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster="/videos/pizza-cheese-pull-poster-v1.png"
+            aria-label="A slice being lifted from a freshly baked pizza"
+          >
+            <source src="/videos/pizza-cheese-pull-v1.mp4" type="video/mp4" />
+          </video>
+          <div>
+            <p className="eyebrow">Fresh from the oven</p>
+            <h2 id="cheese-pull-title">A proper cheese pull.</h2>
+            <p>Hot, generous and ready for the table—exactly how a local pizza night should feel.</p>
+          </div>
+        </div>
+      </section>
+
       <section className="deal-section" id="deals" aria-labelledby="deal-title">
         <div className="shell compact-section-head">
           <div>
-            <p className="eyebrow">Current platform offers</p>
-            <h2 id="deal-title">Deals worth checking.</h2>
+            <p className="eyebrow">Straight from the menu</p>
+            <h2 id="deal-title">Big-night deals.</h2>
           </div>
-          <p>Open the platform to confirm live availability and terms.</p>
+          <p>Pizza, bread and drinks bundled for easy family and group orders.</p>
+        </div>
+        <div className="shell deal-feature">
+          <img src="/images/illustrations/deals-garlic-bread-v3.png" alt="Hand-drawn garlic bread, drink and closed pizza box" width="1456" height="1092" loading="lazy" />
+          <p>Delivery starts from $8. Confirm final availability and pricing when ordering.</p>
         </div>
         <div className="shell deal-list">
           {DEALS.map((deal) => (
@@ -132,14 +165,17 @@ export default function Home() {
 
       <section className="catering-preview">
         <div className="shell catering-preview-grid">
-          <img
-            className="float-food"
-            src="/images/illustrations/catering-spread-v2.png"
-            alt="Simple painted catering spread with pizza boxes, schnitzel and pasta"
-            width="1000"
-            height="1000"
-            loading="lazy"
-          />
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster="/videos/pasta-over-flame-poster-v1.png"
+            aria-label="Pasta being tossed in a pan over a flame"
+          >
+            <source src="/videos/pasta-over-flame-v1.mp4" type="video/mp4" />
+          </video>
           <div className="catering-copy">
             <p className="eyebrow">Catering from your local</p>
             <h2>Good food for the whole room.</h2>
@@ -151,6 +187,7 @@ export default function Home() {
 
       <section className="visit-section" aria-labelledby="visit-title">
         <div className="shell visit-grid">
+          <img className="visit-illustration" src="/images/illustrations/beach-pickup-v3.png" alt="Hand-drawn takeaway pizza box held beside the Christies Beach sunset" width="1456" height="1092" loading="lazy" />
           <div>
             <p className="eyebrow">Tonight on Beach Road</p>
             <h2 id="visit-title">Order, collect, find a sunset.</h2>

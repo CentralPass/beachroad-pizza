@@ -20,7 +20,7 @@ export default function MenuPage() {
             </p>
           </div>
           <img
-            className="page-illustration float-food"
+            className="page-illustration"
             src="/images/illustrations/menu-pasta-v2.png"
             alt="Simple painted bowl of tomato pasta"
             width="1000"
@@ -32,8 +32,16 @@ export default function MenuPage() {
       <div className="shell menu-page-content">
         <div className="menu-notice">
           <strong>Current direct-order menu prices.</strong>
-          <span>Platform pricing, half-and-half choices, extras and gluten-free bases can change the total.</span>
+          <span>Gluten-free bases are available in large for $5. Platform pricing, half-and-half choices and extras can change the total.</span>
         </div>
+        <section className="menu-drawn-feature" aria-labelledby="schnitzel-feature-title">
+          <img src="/images/illustrations/schnitzel-box-v3.png" alt="Hand-drawn chicken schnitzel, chips, gravy and lemon served in a pizza box" width="1456" height="1092" loading="lazy" />
+          <div>
+            <p className="eyebrow">More than pizza</p>
+            <h2 id="schnitzel-feature-title">Schnitzels in a pizza box.</h2>
+            <p>Seven builds, all served with chips—from the classic Snitty to Lamb with tzatziki.</p>
+          </div>
+        </section>
         <MenuExplorer />
       </div>
     </>

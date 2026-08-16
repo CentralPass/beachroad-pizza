@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   description:
     "Great pizzas, great prices, for a great community. Explore Beach Road Pizza's colourful menu, catering and local story in Christies Beach.",
   icons: {
-    icon: "/cursor/pizza.png",
-    shortcut: "/cursor/pizza.png",
+    icon: "/cursor/pizza-small-v2.png",
+    shortcut: "/cursor/pizza-small-v2.png",
   },
   openGraph: {
     type: "website",
@@ -22,10 +22,10 @@ export const metadata: Metadata = {
     siteName: "Beach Road Pizza",
     images: [
       {
-        url: "/og-v2.png",
-        width: 1734,
-        height: 907,
-        alt: "Beach Road Pizza with a bright coral message panel and a real food spread",
+        url: "/og-v3.png",
+        width: 1731,
+        height: 909,
+        alt: "Beach Road Pizza menu-colour social card with a real pizza and sides spread",
       },
     ],
   },
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Beach Road Pizza | Christies Beach",
     description: "Great pizzas, great prices, for a great community.",
-    images: ["/og-v2.png"],
+    images: ["/og-v3.png"],
   },
 };
 

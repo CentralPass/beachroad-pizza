@@ -32,7 +32,10 @@ test("server-renders the finished Beach Road Pizza homepage", async () => {
   assert.match(html, /Beach Road Pizza/);
   assert.match(html, /Great pizzas, great prices, for a great community\./);
   assert.match(html, /2024 Onkaparinga Business Award winner/);
-  assert.match(html, /Current platform offers/);
+  assert.match(html, /Straight from the menu/);
+  assert.match(html, /\$25 Large Deal/);
+  assert.match(html, /pizza-cheese-pull-v1\.mp4/);
+  assert.match(html, /pasta-over-flame-v1\.mp4/);
   assert.match(html, /href="\/menu"/);
   assert.match(html, /href="\/catering"/);
   assert.match(html, /href="\/our-story"/);
@@ -53,7 +56,9 @@ test("server-renders the compact searchable menu with real categories, photos an
   assert.match(html, /Beach Road Pizza_Cheesy Double\.jpg/);
   assert.match(html, /Pastas/);
   assert.match(html, /Schnitzels/);
-  assert.match(html, /From \$13\.50/);
+  assert.match(html, /From \$14\.50/);
+  assert.match(html, /Small \$14\.50 \| Large \$18\.50/);
+  assert.match(html, /schnitzel-box-v3\.png/);
 });
 
 test("removes all temporary starter files and dependencies", async () => {

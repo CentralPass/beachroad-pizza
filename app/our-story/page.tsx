@@ -17,7 +17,7 @@ export default function StoryPage() {
             <p>Ten years of industry experience, one local shop and a simple promise to make every order feel worth it.</p>
           </div>
           <img
-            className="page-illustration float-food"
+            className="page-illustration"
             src="/images/illustrations/story-community-v2.png"
             alt="Simple painted scene of a family business handing an order to a local customer"
             width="1000"

@@ -19,7 +19,7 @@ const items = [
 ];
 
 export function ReviewRail() {
-  const rail = [...items, ...items];
+  const rail = [...items, ...items, ...items, ...items];
 
   return (
     <section className="review-section" aria-labelledby="community-voice-title">
