@@ -6,7 +6,7 @@ import { BUSINESS, DEALS, HOURS } from "./lib/site-data";
 export const metadata: Metadata = {
   title: "Pizza, pasta and local value in Christies Beach",
   description:
-    "See Beach Road Pizza's current deals, local favourites, opening hours, catering and award-winning Christies Beach story.",
+    "See Beach Road Pizza's current deals, local favourites, opening hours and award-winning Christies Beach story.",
 };
 
 const favourites = [
@@ -123,7 +123,7 @@ export default function Home() {
           <p>Pizza, bread and drinks bundled for easy family and group orders.</p>
         </div>
         <div className="shell deal-feature">
-          <img src="/images/illustrations/deals-garlic-bread-v3.png" alt="Hand-drawn garlic bread, drink and closed pizza box" width="1456" height="1092" loading="lazy" />
+          <img src="/images/official/beach-road-meat-feast.jpg" alt="A generously topped meat pizza from Beach Road Pizza" width="700" height="700" loading="lazy" />
           <p>Delivery starts from $8. Confirm final availability and pricing when ordering.</p>
         </div>
         <div className="shell deal-list">
@@ -163,8 +163,8 @@ export default function Home() {
 
       <ReviewRail />
 
-      <section className="catering-preview">
-        <div className="shell catering-preview-grid">
+      <section className="pasta-preview">
+        <div className="shell pasta-preview-grid">
           <video
             autoPlay
             muted
@@ -176,18 +176,22 @@ export default function Home() {
           >
             <source src="/videos/pasta-over-flame-v1.mp4" type="video/mp4" />
           </video>
-          <div className="catering-copy">
-            <p className="eyebrow">Catering from your local</p>
-            <h2>Good food for the whole room.</h2>
-            <p>Pizza, pasta, schnitzels and sides for offices, clubs, birthdays and family events.</p>
-            <a className="button" href="/catering">Plan catering</a>
+          <div className="pasta-preview-copy">
+            <p className="eyebrow">More than pizza</p>
+            <h2>Pasta over flame.</h2>
+            <p>Penne, spaghetti or fettuccine with nine comforting sauces—made hot for an easy local dinner.</p>
+            <a className="button" href="/menu">See pasta on the menu</a>
           </div>
         </div>
       </section>
 
       <section className="visit-section" aria-labelledby="visit-title">
         <div className="shell visit-grid">
-          <img className="visit-illustration" src="/images/illustrations/beach-pickup-v3.png" alt="Hand-drawn takeaway pizza box held beside the Christies Beach sunset" width="1456" height="1092" loading="lazy" />
+          <div className="visit-photo-grid" aria-label="Beach Road Pizza sides and classics">
+            <img src="/images/food/Beach Road Pizza_Margherita.jpg" alt="Margherita pizza from Beach Road Pizza" width="760" height="520" loading="lazy" />
+            <img src="/images/food/Beach Road Pizza_BBQ Chicken Wings.jpg" alt="BBQ chicken wings from Beach Road Pizza" width="760" height="520" loading="lazy" />
+            <img src="/images/food/Beach Road Pizza_Chips.jpg" alt="Hot chips from Beach Road Pizza" width="760" height="520" loading="lazy" />
+          </div>
           <div>
             <p className="eyebrow">Tonight on Beach Road</p>
             <h2 id="visit-title">Order, collect, find a sunset.</h2>

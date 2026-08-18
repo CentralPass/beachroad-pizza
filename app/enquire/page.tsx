@@ -4,7 +4,7 @@ import { BUSINESS, HOURS } from "../lib/site-data";
 
 export const metadata: Metadata = {
   title: "Enquire",
-  description: "Prepare a clear catering, large order or dietary enquiry for Beach Road Pizza in Christies Beach.",
+  description: "Prepare a clear large-order, event or dietary enquiry for Beach Road Pizza in Christies Beach.",
 };
 
 export default function EnquirePage() {
@@ -16,15 +16,15 @@ export default function EnquirePage() {
             <p className="eyebrow">Talk to the team</p>
             <h1>Tell us what you are planning.</h1>
             <p>
-              For catering, large orders and dietary questions, organise the details here before you call.
+              For large orders, group nights and dietary questions, organise the details here before you call.
             </p>
           </div>
           <img
-            className="page-illustration"
-            src="/images/illustrations/enquiry-phone-v2.png"
-            alt="Simple painted telephone, order notepad and pencil"
-            width="1000"
-            height="1000"
+            className="page-photo"
+            src="/images/official/beach-road-chicken.jpg"
+            alt="A chicken pizza photographed by Beach Road Pizza"
+            width="700"
+            height="700"
             fetchPriority="high"
           />
         </div>

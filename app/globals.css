@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@700;800;900&display=swap");
+
 :root {
   --cream: #fff8e8;
   --paper: #fffdf6;
@@ -28,7 +30,7 @@ body {
   overflow-x: hidden;
   background: var(--cream);
   color: var(--ink);
-  font-family: "Arial Narrow", "Roboto Condensed", "Helvetica Neue Condensed", Arial, sans-serif;
+  font-family: "Barlow", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.42;
   text-rendering: optimizeLegibility;
@@ -39,7 +41,7 @@ button,
 input,
 select,
 textarea {
-  font-family: "Arial Narrow", "Roboto Condensed", "Helvetica Neue Condensed", Arial, sans-serif;
+  font-family: "Barlow", Arial, sans-serif;
 }
 
 img,
@@ -86,32 +88,33 @@ h3,
 .button,
 .category-tabs button,
 .footer-kicker {
-  font-family: "Arial Rounded MT Bold", "Arial Black", "Arial Narrow", Arial, sans-serif;
+  font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
 }
 
 h1,
 h2,
 h3 {
-  line-height: 0.94;
-  letter-spacing: -0.045em;
+  line-height: 0.86;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
 }
 
 h1 {
-  max-width: 12ch;
-  margin-bottom: 14px;
-  font-size: clamp(2.35rem, 10vw, 4.5rem);
+  max-width: 13ch;
+  margin-bottom: 12px;
+  font-size: clamp(3.1rem, 13vw, 6.7rem);
   font-weight: 900;
 }
 
 h2 {
-  margin-bottom: 12px;
-  font-size: clamp(1.9rem, 8vw, 3.5rem);
+  margin-bottom: 10px;
+  font-size: clamp(2.6rem, 10vw, 5.2rem);
   font-weight: 900;
 }
 
 h3 {
-  margin-bottom: 7px;
-  font-size: 1.28rem;
+  margin-bottom: 6px;
+  font-size: 1.45rem;
   font-weight: 900;
 }
 
@@ -147,8 +150,8 @@ p {
 .eyebrow {
   margin-bottom: 7px;
   color: var(--coral-dark);
-  font-family: "Arial Rounded MT Bold", "Arial Black", Arial, sans-serif;
-  font-size: 0.7rem;
+  font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  font-size: 0.78rem;
   font-weight: 900;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -169,7 +172,7 @@ p {
   border: 2px solid var(--ink);
   background: var(--coral);
   color: var(--ink);
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 900;
   letter-spacing: 0.055em;
   line-height: 1;
@@ -254,14 +257,14 @@ p {
   align-items: baseline;
   gap: 5px;
   color: var(--ink);
-  font-size: 0.92rem;
+  font-size: 1.02rem;
   line-height: 1;
   text-decoration: none;
   text-transform: uppercase;
 }
 
 .wordmark strong {
-  font-size: 1.08rem;
+  font-size: 1.2rem;
   font-weight: 900;
 }
 
@@ -282,8 +285,8 @@ p {
   justify-content: center;
   border: 2px solid var(--ink);
   cursor: pointer;
-  font-family: "Arial Rounded MT Bold", "Arial Black", Arial, sans-serif;
-  font-size: 0.75rem;
+  font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  font-size: 0.85rem;
   font-weight: 900;
   list-style: none;
   text-transform: uppercase;
@@ -320,7 +323,7 @@ p {
 
 .home-hero {
   overflow: hidden;
-  padding: 24px 0 27px;
+  padding: 20px 0 21px;
   background: var(--cream);
 }
 
@@ -331,7 +334,7 @@ p {
 .catering-hero-grid {
   display: grid;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
 }
 
 .hero-copy {
@@ -358,10 +361,10 @@ p {
 
 .hero-art {
   position: relative;
-  width: min(72vw, 290px);
+  width: min(64vw, 270px);
   aspect-ratio: 1;
   margin: 0 auto;
-  clip-path: circle(48% at 50% 50%);
+  clip-path: circle(46% at 50% 50%);
   background: var(--blue);
 }
 
@@ -369,6 +372,7 @@ p {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(1.16);
 }
 
 .hero-art p {
@@ -412,8 +416,8 @@ p {
 .motion-ticker span {
   display: block;
   padding: 8px 0;
-  font-family: "Arial Rounded MT Bold", "Arial Black", Arial, sans-serif;
-  font-size: 0.75rem;
+  font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  font-size: 0.88rem;
   font-weight: 900;
   letter-spacing: 0.065em;
   text-transform: uppercase;
@@ -421,7 +425,7 @@ p {
 
 .photo-banner {
   position: relative;
-  margin-block: 20px;
+  margin-block: 14px;
   border: 2px solid var(--ink);
 }
 
@@ -446,7 +450,7 @@ p {
 .deal-section,
 .favourites-section,
 .review-section,
-.catering-preview,
+.pasta-preview,
 .visit-section,
 .video-feature,
 .occasion-section,
@@ -455,13 +459,13 @@ p {
 .story-copy-section,
 .award-story,
 .enquiry-section {
-  padding: 34px 0;
+  padding: 25px 0;
   border-bottom: 2px solid var(--ink);
 }
 
 .compact-section-head,
 .section-heading {
-  margin-bottom: 17px;
+  margin-bottom: 13px;
 }
 
 .compact-section-head h2,
@@ -483,12 +487,12 @@ p {
 .video-feature-grid {
   display: grid;
   align-items: center;
-  gap: 16px;
+  gap: 13px;
 }
 
 .video-feature video {
   width: 100%;
-  max-height: 310px;
+  max-height: 250px;
   border: 2px solid var(--ink);
   background: var(--ink);
   object-fit: cover;
@@ -542,7 +546,7 @@ p {
 .deal-list article {
   display: flex;
   min-width: min(78vw, 305px);
-  min-height: 190px;
+  min-height: 170px;
   flex-direction: column;
   padding: 16px;
   border: 2px solid var(--ink);
@@ -595,7 +599,7 @@ p {
 
 .favourite-card img {
   width: 100%;
-  height: 185px;
+  height: 165px;
   object-fit: cover;
   transition: transform 250ms ease;
 }
@@ -611,8 +615,8 @@ p {
 }
 
 .favourite-card strong {
-  font-family: "Arial Rounded MT Bold", "Arial Black", Arial, sans-serif;
-  font-size: 1rem;
+  font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  font-size: 1.18rem;
 }
 
 .favourite-card small {
@@ -666,17 +670,17 @@ p {
   background: var(--yellow);
 }
 
-.catering-preview {
+.pasta-preview {
   background: var(--cream);
 }
 
-.catering-preview-grid {
+.pasta-preview-grid {
   display: grid;
   align-items: center;
-  gap: 16px;
+  gap: 13px;
 }
 
-.catering-preview video {
+.pasta-preview video {
   width: 100%;
   max-height: 320px;
   border: 2px solid var(--ink);
@@ -684,7 +688,7 @@ p {
   object-fit: cover;
 }
 
-.catering-copy p:not(.eyebrow) {
+.pasta-preview-copy p:not(.eyebrow) {
   max-width: 31rem;
   color: var(--muted);
 }
@@ -698,11 +702,22 @@ p {
   gap: 17px;
 }
 
-.visit-illustration {
+.visit-photo-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  grid-template-rows: repeat(2, 92px);
+  gap: 5px;
+}
+
+.visit-photo-grid img {
   width: 100%;
-  max-height: 270px;
+  height: 100%;
   border: 2px solid var(--ink);
   object-fit: cover;
+}
+
+.visit-photo-grid img:first-child {
+  grid-row: 1 / 3;
 }
 
 .visit-section .eyebrow {
@@ -739,7 +754,7 @@ p {
 .inner-hero,
 .story-hero,
 .enquiry-hero {
-  padding: 24px 0 28px;
+  padding: 20px 0 22px;
   border-bottom: 2px solid var(--ink);
 }
 
@@ -764,15 +779,29 @@ p {
   color: var(--ink);
 }
 
-.page-illustration {
-  width: min(88vw, 380px);
+.page-photo {
+  width: min(76vw, 340px);
+  aspect-ratio: 1;
   margin-inline: auto;
   border: 2px solid var(--ink);
-  background: var(--cream);
+  object-fit: cover;
+}
+
+.story-shop-photo {
+  width: 100%;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+}
+
+.story-shop-photo img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  object-position: 82% 42%;
 }
 
 .menu-page-content {
-  padding-block: 20px 38px;
+  padding-block: 14px 28px;
 }
 
 .menu-notice {
@@ -797,10 +826,28 @@ p {
   background: var(--blue);
 }
 
-.menu-drawn-feature img {
+.menu-drawn-feature .credited-photo img {
   width: 100%;
   height: 190px;
   object-fit: cover;
+}
+
+.credited-photo {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+}
+
+.credited-photo figcaption {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  margin: 0;
+  padding: 3px 5px;
+  background: rgba(255, 253, 246, 0.9);
+  color: var(--ink);
+  font-size: 0.58rem;
+  font-weight: 700;
 }
 
 .menu-drawn-feature > div {
@@ -810,7 +857,7 @@ p {
 
 .menu-drawn-feature h2 {
   max-width: 11ch;
-  font-size: clamp(1.75rem, 7vw, 2.7rem);
+  font-size: clamp(2.35rem, 9vw, 4rem);
 }
 
 .menu-drawn-feature p:last-child {
@@ -899,7 +946,7 @@ textarea {
 
 .menu-result-head h2 {
   margin-bottom: 0;
-  font-size: clamp(1.65rem, 7vw, 2.7rem);
+  font-size: clamp(2.3rem, 9vw, 4rem);
 }
 
 .menu-result-head > p {
@@ -1043,7 +1090,7 @@ textarea {
 
 .catering-steps li > span {
   color: var(--coral-dark);
-  font-family: "Arial Rounded MT Bold", "Arial Black", Arial, sans-serif;
+  font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
   font-size: 0.9rem;
   font-weight: 900;
 }
@@ -1074,8 +1121,8 @@ textarea {
   max-width: 11ch;
   margin-bottom: 0;
   color: var(--coral-dark);
-  font-family: "Arial Rounded MT Bold", "Arial Black", Arial, sans-serif;
-  font-size: 1.75rem;
+  font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  font-size: 2.25rem;
   font-weight: 900;
   line-height: 0.96;
 }
@@ -1108,8 +1155,8 @@ textarea {
 
 .award-timeline time {
   color: var(--coral-dark);
-  font-family: "Arial Rounded MT Bold", "Arial Black", Arial, sans-serif;
-  font-size: 1.18rem;
+  font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  font-size: 1.38rem;
   font-weight: 900;
 }
 
@@ -1141,8 +1188,8 @@ textarea {
 }
 
 .contact-phone {
-  font-family: "Arial Rounded MT Bold", "Arial Black", Arial, sans-serif;
-  font-size: 1.3rem;
+  font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  font-size: 1.55rem;
   font-weight: 900;
   text-decoration: none;
 }
@@ -1190,7 +1237,7 @@ textarea {
 .legal-page,
 .not-found {
   min-height: 62vh;
-  padding: 42px 0;
+  padding: 30px 0;
 }
 
 .legal-content {
@@ -1203,7 +1250,7 @@ textarea {
 }
 
 .site-footer {
-  padding: 34px 0 18px;
+  padding: 27px 0 15px;
   border-top: 2px solid var(--ink);
   background: var(--blue);
   color: var(--ink);
@@ -1216,7 +1263,7 @@ textarea {
 
 .footer-brand h2 {
   max-width: 12ch;
-  font-size: 1.75rem;
+  font-size: 2.3rem;
 }
 
 .footer-kicker {
@@ -1300,7 +1347,7 @@ textarea {
 }
 
 @keyframes slow-spin {
-  to { transform: rotate(360deg); }
+  to { transform: scale(1.16) rotate(360deg); }
 }
 
 @keyframes ticker {
@@ -1319,7 +1366,7 @@ textarea {
   html.pizza-cursor input,
   html.pizza-cursor select,
   html.pizza-cursor textarea {
-    cursor: url("/cursor/pizza-small-v2.png") 6 6, auto;
+    cursor: url("/cursor/pizza-photo-v3.jpg") 12 12, auto;
   }
 }
 
@@ -1361,7 +1408,7 @@ textarea {
   }
 
   .home-hero {
-    padding: 36px 0;
+    padding: 30px 0;
   }
 
   .hero-grid,
@@ -1370,7 +1417,7 @@ textarea {
   .enquiry-hero-grid,
   .catering-hero-grid {
     grid-template-columns: minmax(0, 1.1fr) minmax(290px, 0.9fr);
-    gap: 36px;
+    gap: 28px;
   }
 
   .hero-art {
@@ -1384,7 +1431,7 @@ textarea {
   .deal-section,
   .favourites-section,
   .review-section,
-  .catering-preview,
+  .pasta-preview,
   .visit-section,
   .video-feature,
   .occasion-section,
@@ -1393,7 +1440,7 @@ textarea {
   .story-copy-section,
   .award-story,
   .enquiry-section {
-    padding: 52px 0;
+    padding: 44px 0;
   }
 
   .compact-section-head {
@@ -1408,14 +1455,14 @@ textarea {
   }
 
   .video-feature-grid,
-  .catering-preview-grid {
+  .pasta-preview-grid {
     grid-template-columns: 1.15fr 0.85fr;
-    gap: 32px;
+    gap: 28px;
   }
 
   .video-feature video,
-  .catering-preview video {
-    height: 390px;
+  .pasta-preview video {
+    height: 340px;
     max-height: none;
   }
 
@@ -1454,7 +1501,7 @@ textarea {
     height: 225px;
   }
 
-  .catering-preview video {
+  .pasta-preview video {
     order: 2;
   }
 
@@ -1463,21 +1510,25 @@ textarea {
     align-items: stretch;
   }
 
-  .visit-illustration {
+  .visit-photo-grid {
     grid-row: span 2;
     height: 100%;
-    max-height: none;
+    grid-template-rows: repeat(2, minmax(130px, 1fr));
   }
 
-  .page-illustration {
-    width: min(42vw, 470px);
+  .page-photo {
+    width: min(38vw, 430px);
+  }
+
+  .story-shop-photo img {
+    height: 340px;
   }
 
   .menu-drawn-feature {
     grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr);
   }
 
-  .menu-drawn-feature img {
+  .menu-drawn-feature .credited-photo img {
     height: 300px;
   }
 

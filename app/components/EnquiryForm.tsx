@@ -15,7 +15,7 @@ type FormState = {
 const initialState: FormState = {
   name: "",
   phone: "",
-  type: "Catering",
+  type: "Large order",
   date: "",
   guests: "",
   details: "",
@@ -100,8 +100,8 @@ export function EnquiryForm() {
         <label>
           Enquiry type
           <select value={form.type} onChange={(event) => update("type", event.target.value)}>
-            <option>Catering</option>
             <option>Large order</option>
+            <option>Group or event order</option>
             <option>Dietary question</option>
             <option>General question</option>
           </select>

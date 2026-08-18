@@ -37,7 +37,7 @@ test("server-renders the finished Beach Road Pizza homepage", async () => {
   assert.match(html, /pizza-cheese-pull-v1\.mp4/);
   assert.match(html, /pasta-over-flame-v1\.mp4/);
   assert.match(html, /href="\/menu"/);
-  assert.match(html, /href="\/catering"/);
+  assert.doesNotMatch(html, /href="\/catering"/);
   assert.match(html, /href="\/our-story"/);
   assert.match(html, /href="\/enquire"/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
@@ -58,7 +58,7 @@ test("server-renders the compact searchable menu with real categories, photos an
   assert.match(html, /Schnitzels/);
   assert.match(html, /From \$14\.50/);
   assert.match(html, /Small \$14\.50 \| Large \$18\.50/);
-  assert.match(html, /schnitzel-box-v3\.png/);
+  assert.match(html, /schnitzel-and-chips-pexels\.jpg/);
 });
 
 test("removes all temporary starter files and dependencies", async () => {

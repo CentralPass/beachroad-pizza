@@ -20,11 +20,11 @@ export default function MenuPage() {
             </p>
           </div>
           <img
-            className="page-illustration"
-            src="/images/illustrations/menu-pasta-v2.png"
-            alt="Simple painted bowl of tomato pasta"
-            width="1000"
-            height="1000"
+            className="page-photo"
+            src="/images/official/beach-road-special.jpg"
+            alt="A generously topped pizza photographed by Beach Road Pizza"
+            width="700"
+            height="700"
             fetchPriority="high"
           />
         </div>
@@ -35,7 +35,12 @@ export default function MenuPage() {
           <span>Gluten-free bases are available in large for $5. Platform pricing, half-and-half choices and extras can change the total.</span>
         </div>
         <section className="menu-drawn-feature" aria-labelledby="schnitzel-feature-title">
-          <img src="/images/illustrations/schnitzel-box-v3.png" alt="Hand-drawn chicken schnitzel, chips, gravy and lemon served in a pizza box" width="1456" height="1092" loading="lazy" />
+          <figure className="credited-photo">
+            <img src="/images/stock/schnitzel-and-chips-pexels.jpg" alt="Crispy chicken schnitzel served with hot chips" width="1400" height="933" loading="lazy" />
+            <figcaption>
+              Photo: <a href="https://www.pexels.com/photo/crispy-chicken-with-fries-5652265/" target="_blank" rel="noreferrer">Kai-Chieh Chan via Pexels</a>
+            </figcaption>
+          </figure>
           <div>
             <p className="eyebrow">More than pizza</p>
             <h2 id="schnitzel-feature-title">Schnitzels in a pizza box.</h2>

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: "%s | Beach Road Pizza",
   },
   description:
-    "Great pizzas, great prices, for a great community. Explore Beach Road Pizza's colourful menu, catering and local story in Christies Beach.",
+    "Great pizzas, great prices, for a great community. Explore Beach Road Pizza's colourful menu, local deals and family story in Christies Beach.",
   icons: {
     icon: "/cursor/pizza-small-v2.png",
     shortcut: "/cursor/pizza-small-v2.png",

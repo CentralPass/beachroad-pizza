@@ -16,14 +16,18 @@ export default function StoryPage() {
             <h1>Built from the ground up, with the community beside us.</h1>
             <p>Ten years of industry experience, one local shop and a simple promise to make every order feel worth it.</p>
           </div>
-          <img
-            className="page-illustration"
-            src="/images/illustrations/story-community-v2.png"
-            alt="Simple painted scene of a family business handing an order to a local customer"
-            width="1000"
-            height="1000"
-            fetchPriority="high"
-          />
+          <figure className="story-shop-photo credited-photo">
+            <img
+              src="/images/shop/beach-road-pizza-storefront.jpg"
+              alt="Beach Road Pizza shopfront and outdoor seating on Beach Road in Christies Beach"
+              width="2560"
+              height="1555"
+              fetchPriority="high"
+            />
+            <figcaption>
+              <a href="https://yoursay.onkaparinga.sa.gov.au/beach-road-streetscape-improvements" target="_blank" rel="noreferrer">Beach Road streetscape · City of Onkaparinga</a>
+            </figcaption>
+          </figure>
         </div>
       </section>
 
