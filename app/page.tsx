@@ -56,10 +56,10 @@ export default function Home() {
           <div className="hero-art" aria-hidden="true">
             <img
               className="spin-food"
-              src="/images/food/Beach Road Pizza_Peri Peri Chicken.jpg"
+              src="/images/hero/peri-peri-cutout-v1.png"
               alt=""
-              width="1600"
-              height="900"
+              width="1254"
+              height="1254"
               fetchPriority="high"
             />
             <p>Peri Peri Chicken</p>

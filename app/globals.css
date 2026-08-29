@@ -1642,6 +1642,335 @@ textarea {
   }
 }
 
+/* Refined finish: softer hierarchy, fewer outlines and cleaner food photography. */
+:root {
+  --hairline: rgba(10, 32, 40, 0.16);
+  --soft-shadow: 0 12px 28px rgba(10, 32, 40, 0.11);
+  --lift-shadow: 0 7px 18px rgba(10, 32, 40, 0.09);
+}
+
+h1,
+h2,
+h3 {
+  line-height: 0.93;
+  letter-spacing: -0.022em;
+}
+
+h1 {
+  font-weight: 800;
+}
+
+h2 {
+  font-weight: 700;
+}
+
+h3,
+.story-intro,
+.award-timeline time,
+.contact-phone {
+  font-weight: 700;
+}
+
+.wordmark strong,
+.wordmark span,
+.eyebrow,
+.button,
+.category-tabs button,
+.footer-kicker,
+.mobile-menu summary,
+.desktop-nav,
+.text-link,
+.text-button {
+  font-weight: 700;
+}
+
+.service-bar,
+.hero-facts,
+.footer-actions a,
+.footer-button {
+  font-weight: 600;
+}
+
+.service-bar,
+.site-header {
+  border: 0;
+}
+
+.service-bar {
+  box-shadow: inset 0 -1px 0 var(--hairline);
+}
+
+.site-header {
+  background: rgba(255, 248, 232, 0.94);
+  box-shadow: 0 7px 20px rgba(10, 32, 40, 0.07);
+  backdrop-filter: blur(12px);
+}
+
+.button {
+  border: 1px solid transparent;
+  box-shadow: 0 5px 12px rgba(10, 32, 40, 0.1);
+  letter-spacing: 0.04em;
+}
+
+.button:hover {
+  background: var(--coral-dark);
+  color: var(--paper);
+  transform: none;
+}
+
+.button-secondary {
+  border-color: rgba(10, 32, 40, 0.38);
+  background: transparent;
+  box-shadow: none;
+}
+
+.mobile-menu summary {
+  border: 1px solid var(--hairline);
+  background: rgba(255, 253, 246, 0.72);
+}
+
+.mobile-menu nav {
+  border: 0;
+  background: var(--paper);
+  box-shadow: var(--soft-shadow);
+}
+
+.mobile-menu nav a {
+  border-bottom-color: var(--hairline);
+  font-weight: 700;
+}
+
+.mobile-menu nav a:last-child {
+  background: var(--coral);
+}
+
+.hero-art {
+  width: min(72vw, 310px);
+  padding: 8px;
+  overflow: visible;
+  clip-path: none;
+  background: transparent;
+}
+
+.hero-art img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  transform: none;
+  filter: drop-shadow(0 16px 14px rgba(10, 32, 40, 0.18));
+}
+
+.hero-art p {
+  right: 2%;
+  bottom: 7%;
+  border: 0;
+  box-shadow: 0 5px 14px rgba(10, 32, 40, 0.15);
+  font-weight: 700;
+}
+
+.spin-food {
+  animation-name: refined-spin;
+}
+
+@keyframes refined-spin {
+  to { transform: rotate(360deg); }
+}
+
+.motion-ticker {
+  border: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 var(--hairline);
+}
+
+.motion-ticker span {
+  font-weight: 700;
+}
+
+.photo-banner,
+.video-feature video,
+.pasta-preview video,
+.deal-feature,
+.deal-list article,
+.favourite-card,
+.review-card,
+.visit-photo-grid img,
+.hours-list,
+.page-photo,
+.story-shop-photo,
+.menu-drawn-feature,
+.menu-tools,
+.menu-item > img,
+.menu-order-bar,
+.empty-state,
+.prepared-enquiry,
+.award-timeline article,
+.contact-panel {
+  border: 0;
+}
+
+.photo-banner,
+.video-feature video,
+.pasta-preview video,
+.page-photo,
+.story-shop-photo {
+  box-shadow: var(--soft-shadow);
+}
+
+.photo-banner p {
+  border: 0;
+  box-shadow: 0 5px 14px rgba(10, 32, 40, 0.14);
+  font-weight: 600;
+}
+
+.deal-feature,
+.deal-list article,
+.review-card,
+.hours-list,
+.menu-tools,
+.menu-order-bar,
+.empty-state,
+.prepared-enquiry,
+.award-timeline article,
+.contact-panel {
+  box-shadow: var(--lift-shadow);
+}
+
+.deal-feature p,
+.menu-drawn-feature > div {
+  border: 0;
+}
+
+.deal-list article {
+  padding: 18px;
+}
+
+.deal-list small,
+.review-card span,
+.favourite-card small {
+  font-weight: 500;
+}
+
+.favourite-card strong {
+  font-weight: 700;
+}
+
+.review-card p {
+  font-weight: 600;
+  line-height: 1.26;
+}
+
+.visit-photo-grid {
+  gap: 8px;
+}
+
+.deal-section,
+.favourites-section,
+.review-section,
+.pasta-preview,
+.visit-section,
+.video-feature,
+.story-copy-section,
+.award-story,
+.enquiry-section,
+.inner-hero,
+.story-hero,
+.enquiry-hero {
+  border: 0;
+}
+
+.hours-list div,
+.contact-hours,
+.footer-meta,
+.footer-bottom {
+  border-color: var(--hairline);
+}
+
+.menu-notice {
+  border: 0;
+  border-left: 4px solid var(--coral);
+  box-shadow: var(--lift-shadow);
+}
+
+.credited-photo figcaption {
+  font-weight: 500;
+}
+
+input,
+select,
+textarea {
+  border: 1px solid var(--hairline);
+  box-shadow: inset 0 1px 2px rgba(10, 32, 40, 0.04);
+}
+
+.category-tabs button {
+  border: 0;
+  background: rgba(255, 253, 246, 0.82);
+  box-shadow: 0 3px 8px rgba(10, 32, 40, 0.06);
+}
+
+.category-tabs button.is-active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.menu-list {
+  border-top: 1px solid var(--hairline);
+}
+
+.menu-item {
+  border-bottom-color: var(--hairline);
+}
+
+.menu-item-title strong {
+  font-weight: 700;
+}
+
+.menu-labels span {
+  border: 0;
+  font-weight: 600;
+}
+
+.site-footer {
+  border: 0;
+}
+
+.footer-meta,
+.footer-bottom {
+  border-top: 1px solid var(--hairline);
+}
+
+.footer-meta details div {
+  border: 0;
+  box-shadow: var(--soft-shadow);
+}
+
+.footer-button {
+  border: 1px solid var(--hairline);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html.pizza-cursor,
+  html.pizza-cursor a,
+  html.pizza-cursor button,
+  html.pizza-cursor summary,
+  html.pizza-cursor input,
+  html.pizza-cursor select,
+  html.pizza-cursor textarea {
+    cursor: url("/cursor/pizza-cutout-v4.png") 10 10, auto;
+  }
+}
+
+@media (min-width: 720px) {
+  .hero-art {
+    width: min(35vw, 390px);
+  }
+
+  .deal-feature p,
+  .menu-drawn-feature > div {
+    border: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
