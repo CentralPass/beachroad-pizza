@@ -1962,7 +1962,7 @@ textarea {
 
 @media (min-width: 720px) {
   .hero-art {
-    width: min(46vw, 520px);
+    width: min(52vw, 590px);
   }
 
   .deal-feature p,
@@ -2178,12 +2178,12 @@ h3 {
 
 @media (min-width: 720px) {
   .hero-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(400px, 1fr);
-    gap: 16px;
+    grid-template-columns: minmax(0, 0.95fr) minmax(430px, 1.05fr);
+    gap: 8px;
   }
 
   .hero-art {
-    width: min(46vw, 520px);
+    width: min(52vw, 590px);
   }
 
   .food-marquee {
@@ -2202,6 +2202,182 @@ h3 {
   .inner-motion-group span {
     padding-block: 11px 12px;
     font-size: 0.86rem;
+  }
+}
+
+@media (max-width: 719px) {
+  :root {
+    --shell: min(100% - 24px, 1120px);
+  }
+
+  body {
+    font-size: 15.5px;
+  }
+
+  h1 {
+    max-width: 12ch;
+    margin-bottom: 9px;
+    font-size: clamp(2.75rem, 12.5vw, 3.45rem);
+    line-height: 0.94;
+  }
+
+  h2 {
+    font-size: clamp(2.2rem, 10.5vw, 3rem);
+    line-height: 0.96;
+  }
+
+  .service-bar-inner {
+    min-height: 29px;
+  }
+
+  .header-inner {
+    min-height: 56px;
+  }
+
+  .home-hero {
+    padding: 15px 0 7px;
+  }
+
+  .hero-grid {
+    gap: 0;
+  }
+
+  .hero-lead {
+    margin-bottom: 13px;
+    font-size: 0.95rem;
+  }
+
+  .hero-copy .button-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hero-copy .button {
+    min-width: 0;
+    padding-inline: 10px;
+  }
+
+  .hero-facts {
+    margin-top: 10px;
+  }
+
+  .hero-art {
+    width: min(96vw, 420px);
+    margin: -5px auto -25px;
+  }
+
+  .hero-art p {
+    right: 2%;
+    bottom: 10%;
+  }
+
+  .motion-ticker span {
+    padding-block: 7px;
+    font-size: 0.8rem;
+  }
+
+  .photo-banner {
+    margin-block: 10px;
+  }
+
+  .photo-banner img {
+    height: 168px;
+  }
+
+  .food-marquee {
+    padding-bottom: 10px;
+  }
+
+  .food-marquee figure {
+    width: 154px;
+    height: 102px;
+  }
+
+  .deal-section,
+  .favourites-section,
+  .review-section,
+  .pasta-preview,
+  .visit-section,
+  .video-feature,
+  .story-copy-section,
+  .award-story,
+  .enquiry-section {
+    padding: 21px 0;
+  }
+
+  .compact-section-head,
+  .section-heading {
+    margin-bottom: 10px;
+  }
+
+  .video-feature-grid,
+  .pasta-preview-grid {
+    gap: 10px;
+  }
+
+  .video-feature video,
+  .pasta-preview video {
+    max-height: 225px;
+  }
+
+  .deal-feature {
+    margin-bottom: 12px;
+  }
+
+  .deal-feature img {
+    height: 165px;
+  }
+
+  .deal-list article {
+    min-width: min(82vw, 294px);
+    min-height: 158px;
+    padding: 15px;
+  }
+
+  .inner-hero,
+  .story-hero,
+  .enquiry-hero {
+    padding: 16px 0 8px;
+  }
+
+  .inner-hero-grid,
+  .enquiry-hero-grid {
+    gap: 0;
+  }
+
+  .page-cutout {
+    width: min(78vw, 310px);
+    margin-top: -4px;
+    margin-bottom: -13px;
+  }
+
+  .inner-motion-group span {
+    padding: 8px 12px 9px;
+    font-size: 0.72rem;
+  }
+
+  .inner-motion-group span::after {
+    margin-left: 24px;
+  }
+
+  .menu-page-content {
+    padding-block: 10px 22px;
+  }
+
+  .menu-notice {
+    margin-bottom: 14px;
+  }
+
+  .menu-drawn-feature {
+    margin-bottom: 17px;
+  }
+
+  .category-tabs {
+    margin-bottom: 16px;
+  }
+
+  .enquiry-layout {
+    gap: 15px;
   }
 }
 
