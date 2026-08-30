@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap");
 
 :root {
   --cream: #fff8e8;
@@ -30,7 +30,7 @@ body {
   overflow-x: hidden;
   background: var(--cream);
   color: var(--ink);
-  font-family: "Barlow", Arial, sans-serif;
+  font-family: "DM Sans", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.42;
   text-rendering: optimizeLegibility;
@@ -41,7 +41,7 @@ button,
 input,
 select,
 textarea {
-  font-family: "Barlow", Arial, sans-serif;
+  font-family: "DM Sans", Arial, sans-serif;
 }
 
 img,
@@ -1962,12 +1962,246 @@ textarea {
 
 @media (min-width: 720px) {
   .hero-art {
-    width: min(35vw, 390px);
+    width: min(46vw, 520px);
   }
 
   .deal-feature p,
   .menu-drawn-feature > div {
     border: 0;
+  }
+}
+
+/* Type and motion refresh: expressive display type, cleaner cutouts and purposeful movement. */
+h1,
+h2,
+h3,
+.wordmark,
+.eyebrow,
+.button,
+.category-tabs button,
+.footer-kicker,
+.mobile-menu summary,
+.desktop-nav,
+.text-link,
+.text-button,
+.favourite-card strong,
+.motion-ticker span,
+.inner-motion-rail,
+.deal-list a,
+.contact-phone,
+.story-intro,
+.award-timeline time {
+  font-family: "Bricolage Grotesque", "Arial Narrow", Arial, sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.045em;
+  line-height: 0.94;
+}
+
+h1 {
+  max-width: 14ch;
+  font-size: clamp(3rem, 10.5vw, 6.15rem);
+  font-weight: 800;
+}
+
+h2 {
+  font-size: clamp(2.45rem, 8vw, 4.65rem);
+  font-weight: 750;
+}
+
+h3 {
+  font-weight: 700;
+}
+
+.wordmark strong,
+.wordmark span,
+.eyebrow,
+.button,
+.category-tabs button,
+.footer-kicker,
+.mobile-menu summary,
+.desktop-nav,
+.text-link,
+.text-button {
+  font-weight: 700;
+}
+
+.hero-art {
+  width: min(84vw, 370px);
+  padding: 2px;
+}
+
+.hero-art p {
+  right: -1%;
+  bottom: 7%;
+  padding: 8px 11px;
+  font-family: "Bricolage Grotesque", Arial, sans-serif;
+  font-size: 0.68rem;
+}
+
+.spin-food {
+  animation-duration: 24s;
+}
+
+.food-marquee {
+  overflow: hidden;
+  padding: 0 0 14px;
+  background: var(--cream);
+}
+
+.food-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: food-marquee-scroll 36s linear infinite;
+  will-change: transform;
+}
+
+.food-marquee-group {
+  display: flex;
+  gap: 10px;
+  padding-right: 10px;
+}
+
+.food-marquee figure {
+  position: relative;
+  width: 172px;
+  height: 116px;
+  flex: 0 0 auto;
+  margin: 0;
+  overflow: hidden;
+  background: var(--ink);
+  box-shadow: var(--lift-shadow);
+}
+
+.food-marquee img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.food-marquee figcaption {
+  position: absolute;
+  left: 7px;
+  bottom: 7px;
+  padding: 5px 7px;
+  background: rgba(255, 253, 246, 0.94);
+  color: var(--ink);
+  font-family: "Bricolage Grotesque", Arial, sans-serif;
+  font-size: 0.67rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.deal-feature img {
+  object-position: 50% 48%;
+}
+
+.page-cutout {
+  display: block;
+  width: min(88vw, 410px);
+  aspect-ratio: 1;
+  margin-inline: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 16px rgba(10, 32, 40, 0.18));
+  animation: cutout-drift 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+.page-cutout-enquire {
+  animation-delay: -2.5s;
+}
+
+.inner-motion-rail {
+  overflow: hidden;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.inner-motion-rail-coral {
+  background: var(--coral);
+}
+
+.inner-motion-rail-blue {
+  background: var(--blue);
+}
+
+.inner-motion-track {
+  display: flex;
+  width: max-content;
+  animation: inner-motion-scroll 27s linear infinite;
+  will-change: transform;
+}
+
+.inner-motion-group {
+  display: flex;
+  align-items: center;
+  padding-right: 30px;
+}
+
+.inner-motion-group span {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 15px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.inner-motion-group span::after {
+  margin-left: 30px;
+  content: "•";
+}
+
+@keyframes food-marquee-scroll {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes inner-motion-scroll {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes cutout-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-0.4deg); }
+  50% { transform: translate3d(0, -9px, 0) rotate(0.8deg); }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .food-marquee:hover .food-marquee-track,
+  .inner-motion-rail:hover .inner-motion-track {
+    animation-play-state: paused;
+  }
+}
+
+@media (min-width: 720px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(400px, 1fr);
+    gap: 16px;
+  }
+
+  .hero-art {
+    width: min(46vw, 520px);
+  }
+
+  .food-marquee {
+    padding-bottom: 18px;
+  }
+
+  .food-marquee figure {
+    width: 245px;
+    height: 155px;
+  }
+
+  .page-cutout {
+    width: min(42vw, 480px);
+  }
+
+  .inner-motion-group span {
+    padding-block: 11px 12px;
+    font-size: 0.86rem;
   }
 }
 
@@ -1978,7 +2212,10 @@ textarea {
 
   .spin-food,
   .motion-ticker-track,
-  .review-track {
+  .review-track,
+  .food-marquee-track,
+  .inner-motion-track,
+  .page-cutout {
     animation: none;
   }
 

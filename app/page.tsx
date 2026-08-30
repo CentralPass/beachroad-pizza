@@ -27,6 +27,29 @@ const favourites = [
   },
 ];
 
+const movingFavourites = [
+  {
+    title: "Aussie",
+    image: "/images/food/Beach Road Pizza_Aussie.jpg",
+  },
+  {
+    title: "Pepperoni",
+    image: "/images/food/Beach Road Pizza_Pepporini.jpg",
+  },
+  {
+    title: "Vegetarian",
+    image: "/images/food/Beach Road Pizza_Vegetarian.jpg",
+  },
+  {
+    title: "Ham & Cheese",
+    image: "/images/food/Beach Road Pizza_Ham & Cheese.jpg",
+  },
+  {
+    title: "Chicken",
+    image: "/images/food/Beach Road Pizza_Chicken.jpg",
+  },
+];
+
 export default function Home() {
   return (
     <>
@@ -93,6 +116,27 @@ export default function Home() {
         <p>Made for sharing. Better by the beach.</p>
       </section>
 
+      <section className="food-marquee" aria-label="More Beach Road Pizza favourites">
+        <div className="food-marquee-track">
+          {[0, 1].map((group) => (
+            <div className="food-marquee-group" aria-hidden={group === 1 ? "true" : undefined} key={group}>
+              {movingFavourites.map((item) => (
+                <figure key={`${group}-${item.title}`}>
+                  <img
+                    src={item.image}
+                    alt={group === 0 ? `${item.title} from Beach Road Pizza` : ""}
+                    width="760"
+                    height="520"
+                    loading="lazy"
+                  />
+                  <figcaption>{item.title}</figcaption>
+                </figure>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="video-feature video-feature-blue" aria-labelledby="cheese-pull-title">
         <div className="shell video-feature-grid">
           <video
@@ -123,7 +167,7 @@ export default function Home() {
           <p>Pizza, bread and drinks bundled for easy family and group orders.</p>
         </div>
         <div className="shell deal-feature">
-          <img src="/images/official/beach-road-meat-feast.jpg" alt="A generously topped meat pizza from Beach Road Pizza" width="700" height="700" loading="lazy" />
+          <img src="/images/food/Beach Road Pizza_Cheesy Double.jpg" alt="A golden cheesy pizza from Beach Road Pizza" width="1600" height="900" loading="lazy" />
           <p>Delivery starts from $8. Confirm final availability and pricing when ordering.</p>
         </div>
         <div className="shell deal-list">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { MenuExplorer } from "../components/MenuExplorer";
+import { MotionRail } from "../components/MotionRail";
 
 export const metadata: Metadata = {
   title: "Menu",
@@ -20,15 +21,20 @@ export default function MenuPage() {
             </p>
           </div>
           <img
-            className="page-photo"
-            src="/images/official/beach-road-special.jpg"
-            alt="A generously topped pizza photographed by Beach Road Pizza"
-            width="700"
-            height="700"
+            className="page-cutout page-cutout-menu"
+            src="/images/cutouts/menu-special-cutout-v1.png"
+            alt="A generously topped Beach Road Pizza special"
+            width="1254"
+            height="1254"
             fetchPriority="high"
           />
         </div>
       </section>
+      <MotionRail
+        label="Menu highlights"
+        tone="coral"
+        items={["Traditional pizzas", "Gourmet favourites", "Vegan choices", "Pasta", "Schnitzels", "Sides"]}
+      />
       <div className="shell menu-page-content">
         <div className="menu-notice">
           <strong>Current direct-order menu prices.</strong>

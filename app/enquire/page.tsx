@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { EnquiryForm } from "../components/EnquiryForm";
+import { MotionRail } from "../components/MotionRail";
 import { BUSINESS, HOURS } from "../lib/site-data";
 
 export const metadata: Metadata = {
@@ -20,15 +21,20 @@ export default function EnquirePage() {
             </p>
           </div>
           <img
-            className="page-photo"
-            src="/images/official/beach-road-chicken.jpg"
-            alt="A chicken pizza photographed by Beach Road Pizza"
-            width="700"
-            height="700"
+            className="page-cutout page-cutout-enquire"
+            src="/images/cutouts/enquire-chicken-cutout-v1.png"
+            alt="A chicken pizza from Beach Road Pizza"
+            width="1254"
+            height="1254"
             fetchPriority="high"
           />
         </div>
       </section>
+      <MotionRail
+        label="Large order enquiry topics"
+        tone="blue"
+        items={["Group nights", "Large orders", "Dietary questions", "Birthday dinners", "Community events"]}
+      />
       <section className="enquiry-section">
         <div className="shell enquiry-layout">
           <div className="contact-panel">
