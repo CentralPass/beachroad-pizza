@@ -26,8 +26,13 @@ export function Shell({ children }: { children: ReactNode }) {
       <header className="site-header">
         <div className="shell header-inner">
           <a className="wordmark" href="/" aria-label="Beach Road Pizza home">
-            <strong>Beach Road</strong>
-            <span>Pizza</span>
+            <img
+              className="header-logo"
+              src="/brand/beach-road-pizza-logo-v1.png"
+              alt="Beach Road Pizza"
+              width="1433"
+              height="1098"
+            />
           </a>
           <nav className="desktop-nav" aria-label="Primary navigation">
             {nav.map((item) => (
@@ -58,8 +63,17 @@ export function Shell({ children }: { children: ReactNode }) {
       <footer className="site-footer">
         <div className="shell footer-main">
           <div className="footer-brand">
-            <p className="footer-kicker">Beach Road Pizza</p>
-            <h2>Great pizzas, great prices, for a great community.</h2>
+            <img
+              className="footer-logo"
+              src="/brand/beach-road-pizza-logo-v1.png"
+              alt=""
+              width="1433"
+              height="1098"
+            />
+            <div>
+              <p className="footer-kicker">Beach Road Pizza</p>
+              <h2>Great pizzas, great prices, for a great community.</h2>
+            </div>
           </div>
           <div className="footer-actions">
             <a href={BUSINESS.phoneHref}>Call {BUSINESS.phoneDisplay}</a>

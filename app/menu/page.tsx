@@ -20,14 +20,19 @@ export default function MenuPage() {
               Search by name, tap a category and check prices without opening a PDF.
             </p>
           </div>
-          <img
-            className="page-cutout page-cutout-menu"
-            src="/images/cutouts/menu-special-cutout-v1.png"
-            alt="A generously topped Beach Road Pizza special"
-            width="1254"
-            height="1254"
-            fetchPriority="high"
-          />
+          <div className="page-art page-art-menu">
+            <span className="page-art-label page-art-label-one" aria-hidden="true">Gourmet</span>
+            <span className="page-art-label page-art-label-two" aria-hidden="true">Vegan + GF</span>
+            <span className="page-art-label page-art-label-three" aria-hidden="true">Pasta too</span>
+            <img
+              className="page-cutout page-cutout-menu"
+              src="/images/cutouts/menu-special-cutout-v1.png"
+              alt="A generously topped Beach Road Pizza special"
+              width="1254"
+              height="1254"
+              fetchPriority="high"
+            />
+          </div>
         </div>
       </section>
       <MotionRail

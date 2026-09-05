@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   description:
     "Great pizzas, great prices, for a great community. Explore Beach Road Pizza's colourful menu, local deals and family story in Christies Beach.",
   icons: {
-    icon: "/cursor/pizza-small-v2.png",
-    shortcut: "/cursor/pizza-small-v2.png",
+    icon: "/brand/beach-road-pizza-logo-v1.png",
+    shortcut: "/brand/beach-road-pizza-logo-v1.png",
   },
   openGraph: {
     type: "website",

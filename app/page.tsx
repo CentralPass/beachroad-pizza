@@ -167,7 +167,7 @@ export default function Home() {
           <p>Pizza, bread and drinks bundled for easy family and group orders.</p>
         </div>
         <div className="shell deal-feature">
-          <img src="/images/food/Beach Road Pizza_BBQ Meat Lovers.jpg" alt="A BBQ meat lovers pizza from Beach Road Pizza" width="1600" height="900" loading="lazy" />
+          <img src="/images/food/Beach Road Pizza_Cheesy Double.jpg" alt="A golden Cheesy Double pizza from Beach Road Pizza" width="1600" height="900" loading="lazy" />
           <p>Delivery starts from $8. Confirm final availability and pricing when ordering.</p>
         </div>
         <div className="shell deal-list">

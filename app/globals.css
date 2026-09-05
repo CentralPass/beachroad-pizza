@@ -1962,7 +1962,7 @@ textarea {
 
 @media (min-width: 720px) {
   .hero-art {
-    width: min(59vw, 670px);
+    width: min(64vw, 740px);
   }
 
   .deal-feature p,
@@ -2178,13 +2178,13 @@ h3 {
 
 @media (min-width: 720px) {
   .hero-grid {
-    grid-template-columns: minmax(0, 0.9fr) minmax(460px, 1.1fr);
+    grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1.08fr);
     gap: 0;
   }
 
   .hero-art {
-    width: min(59vw, 670px);
-    margin-left: -2%;
+    width: min(64vw, 740px);
+    margin-left: -5%;
   }
 
   .food-marquee {
@@ -2263,9 +2263,9 @@ h3 {
   }
 
   .hero-art {
-    width: min(110vw, 470px);
+    width: min(122vw, 520px);
     max-width: none;
-    margin: -15px calc(50% - 55vw) -48px;
+    margin: -24px calc(50% - 61vw) -64px;
   }
 
   .hero-art p {
@@ -2380,6 +2380,172 @@ h3 {
 
   .enquiry-layout {
     gap: 15px;
+  }
+}
+
+/* Brand mark and food-led hero details. */
+.wordmark {
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+.header-logo {
+  width: 70px;
+  height: auto;
+  max-height: 54px;
+  object-fit: contain;
+}
+
+.header-inner {
+  min-height: 64px;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.footer-logo {
+  width: 96px;
+  height: auto;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.footer-brand h2 {
+  margin-bottom: 0;
+}
+
+.page-art {
+  position: relative;
+  width: min(90vw, 420px);
+  min-height: 330px;
+  margin-inline: auto;
+  isolation: isolate;
+}
+
+.page-art::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -2;
+  color: rgba(10, 32, 40, 0.085);
+  font-family: "Bricolage Grotesque", Arial, sans-serif;
+  font-size: clamp(5.7rem, 25vw, 8.8rem);
+  font-weight: 800;
+  letter-spacing: -0.075em;
+  line-height: 0.8;
+  transform: translate(-50%, -50%) rotate(-7deg);
+  white-space: nowrap;
+}
+
+.page-art::after {
+  position: absolute;
+  inset: 8% 10%;
+  z-index: -1;
+  background: url("/brand/beach-road-pizza-logo-v1.png") center / contain no-repeat;
+  content: "";
+  opacity: 0.13;
+}
+
+.page-art-menu::before {
+  content: "MENU";
+}
+
+.page-art-enquire::before {
+  content: "HELLO";
+}
+
+.page-art .page-cutout {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin: 0;
+}
+
+.page-art-label {
+  position: absolute;
+  z-index: 3;
+  padding: 7px 9px;
+  background: var(--paper);
+  box-shadow: 0 7px 16px rgba(10, 32, 40, 0.13);
+  color: var(--ink);
+  font-family: "Bricolage Grotesque", Arial, sans-serif;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.page-art-label-one {
+  top: 11%;
+  left: -1%;
+  background: var(--coral);
+}
+
+.page-art-label-two {
+  top: 24%;
+  right: -2%;
+  background: var(--blue);
+}
+
+.page-art-label-three {
+  bottom: 14%;
+  left: 2%;
+  background: var(--paper);
+}
+
+.page-art-enquire .page-art-label-one {
+  background: var(--blue);
+}
+
+.page-art-enquire .page-art-label-two {
+  background: var(--paper);
+}
+
+.page-art-enquire .page-art-label-three {
+  background: var(--coral);
+}
+
+@media (min-width: 720px) {
+  .header-inner {
+    min-height: 78px;
+  }
+
+  .header-logo {
+    width: 89px;
+    max-height: 68px;
+  }
+
+  .footer-logo {
+    width: 132px;
+  }
+
+  .page-art {
+    width: min(44vw, 500px);
+    min-height: 420px;
+  }
+
+  .page-art::before {
+    font-size: clamp(7rem, 12vw, 10rem);
+  }
+
+  .page-art-label {
+    padding: 8px 11px;
+    font-size: 0.72rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 0.88fr) minmax(480px, 1.12fr);
+  }
+
+  .hero-art {
+    width: min(68vw, 780px);
+    margin-left: -10%;
   }
 }
 

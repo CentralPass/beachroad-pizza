@@ -13,7 +13,7 @@ export default function StoryPage() {
         <div className="shell story-hero-grid">
           <div>
             <p className="eyebrow">Family owned in Christies Beach</p>
-            <h1>Built from the ground up, with the community beside us.</h1>
+            <h1>A local pizza shop made for its community.</h1>
             <p>Ten years of industry experience, one local shop and a simple promise to make every order feel worth it.</p>
           </div>
           <figure className="story-shop-photo credited-photo">
@@ -39,7 +39,7 @@ export default function StoryPage() {
               Beach Road Pizza is a small family business shaped by Christies Beach and the people who keep choosing local. The owner brings more than a decade in the pizza industry and the practical knowledge that comes from working every part of it.
             </p>
             <p>
-              As a first-generation immigrant, building the business meant starting from the ground up, pushing through hard seasons and staying focused on the customer at the counter. That experience shows in generous toppings, broad choice, familiar prices and service that makes an everyday dinner feel special.
+              Years spent learning every part of the trade—from preparation and service to keeping quality consistent—show in generous toppings, broad choice, familiar prices and a team that makes an everyday dinner feel special.
             </p>
             <p>
               The goal remains simple: make food people look forward to, treat customers with care and keep Beach Road Pizza connected to the community that made it possible.
