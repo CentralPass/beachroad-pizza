@@ -6,11 +6,16 @@ export function CursorToggle() {
   const [enabled, setEnabled] = useState(true);
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("brp-pizza-cursor");
-    const shouldEnable = saved !== "off";
-    setEnabled(shouldEnable);
-    document.documentElement.classList.toggle("pizza-cursor", shouldEnable);
-    return () => document.documentElement.classList.remove("pizza-cursor");
+    const timer = window.setTimeout(() => {
+      const saved = window.localStorage.getItem("brp-pizza-cursor");
+      const shouldEnable = saved !== "off";
+      setEnabled(shouldEnable);
+      document.documentElement.classList.toggle("pizza-cursor", shouldEnable);
+    }, 0);
+    return () => {
+      window.clearTimeout(timer);
+      document.documentElement.classList.remove("pizza-cursor");
+    };
   }, []);
 
   function toggle() {

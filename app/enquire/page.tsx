@@ -64,6 +64,41 @@ export default function EnquirePage() {
           <EnquiryForm />
         </div>
       </section>
+      <section className="faq-section" aria-labelledby="faq-title">
+        <div className="shell faq-layout">
+          <div className="faq-heading">
+            <p className="eyebrow">Good to know</p>
+            <h2 id="faq-title">Frequently asked questions.</h2>
+            <p>Quick answers before you call or place an order.</p>
+          </div>
+          <div className="faq-list">
+            <details>
+              <summary>Do you have gluten-free pizza bases?</summary>
+              <p>Yes. Gluten-free bases are available in large size for an extra $5. The kitchen handles gluten, so please call the shop before ordering if you have coeliac disease or a serious allergy.</p>
+            </details>
+            <details>
+              <summary>Are there vegan options?</summary>
+              <p>Yes. The menu includes vegan pizzas, vegan garlic bread and vegan nuggets. For allergies or specific preparation questions, check with the team before ordering.</p>
+            </details>
+            <details>
+              <summary>Can I order pickup or delivery?</summary>
+              <p>Both are available. Pickup is from 29B Beach Road, Christies Beach. Delivery starts from $8, with the final fee and delivery area confirmed before payment.</p>
+            </details>
+            <details>
+              <summary>Can I organise a large group order?</summary>
+              <p>Absolutely. Call as early as possible with your date, preferred time, guest count and dietary needs—especially for Friday and Saturday nights.</p>
+            </details>
+            <details>
+              <summary>What time do you open?</summary>
+              <p>Beach Road Pizza opens from 3 pm, seven days a week. Public holiday hours can change, so call the shop to confirm on those dates.</p>
+            </details>
+            <details>
+              <summary>Can I customise a pizza?</summary>
+              <p>Many pizzas can be adjusted. Extras, substitutions and half-and-half selections may change the total, which will be confirmed before payment.</p>
+            </details>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

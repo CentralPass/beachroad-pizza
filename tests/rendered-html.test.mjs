@@ -30,7 +30,9 @@ test("server-renders the finished Beach Road Pizza homepage", async () => {
 
   const html = await response.text();
   assert.match(html, /Beach Road Pizza/);
-  assert.match(html, /Great pizzas, great prices, for a great community\./);
+  assert.match(html, /Great pizzas\./);
+  assert.match(html, /Great prices\./);
+  assert.match(html, /For a great community\./);
   assert.match(html, /2024 Onkaparinga Business Award winner/);
   assert.match(html, /Straight from the menu/);
   assert.match(html, /\$25 Large Deal/);
@@ -59,6 +61,35 @@ test("server-renders the compact searchable menu with real categories, photos an
   assert.match(html, /From \$14\.50/);
   assert.match(html, /Small \$14\.50 \| Large \$18\.50/);
   assert.match(html, /schnitzel-and-chips-pexels\.jpg/);
+  assert.match(html, /Add to order/);
+  assert.doesNotMatch(html, />Gourmet<|>Vegan \+ GF<|>Pasta too</);
+});
+
+test("server-renders the pre-checkout ordering flow", async () => {
+  const response = await render("/order");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /Pizza night, sorted\./);
+  assert.match(html, /Your favourites\./);
+  assert.match(html, /Pickup/);
+  assert.match(html, /Delivery/);
+  assert.match(html, /Review order/);
+  assert.match(html, /Add to order/);
+});
+
+test("server-renders enquiry FAQs and official social links", async () => {
+  const enquiryResponse = await render("/enquire");
+  assert.equal(enquiryResponse.status, 200);
+  const enquiryHtml = await enquiryResponse.text();
+  assert.match(enquiryHtml, /Frequently asked questions\./);
+  assert.match(enquiryHtml, /Do you have gluten-free pizza bases\?/);
+
+  const storyResponse = await render("/our-story");
+  assert.equal(storyResponse.status, 200);
+  const storyHtml = await storyResponse.text();
+  assert.match(storyHtml, /instagram\.com\/beachroadpizza/i);
+  assert.match(storyHtml, /facebook\.com\/BeachRoadPizza/i);
 });
 
 test("removes all temporary starter files and dependencies", async () => {

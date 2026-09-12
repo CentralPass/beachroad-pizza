@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Shell } from "./components/Shell";
+import { CartProvider } from "./components/CartProvider";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://beachroadpizza.com.au"),
@@ -45,7 +46,9 @@ export default function RootLayout({
   return (
     <html lang="en-AU">
       <body>
-        <Shell>{children}</Shell>
+        <CartProvider>
+          <Shell>{children}</Shell>
+        </CartProvider>
       </body>
     </html>
   );

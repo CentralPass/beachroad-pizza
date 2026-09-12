@@ -5,7 +5,9 @@ export const BUSINESS = {
   address: "29B Beach Road, Christies Beach SA 5165",
   mapsUrl:
     "https://www.google.com/maps/search/?api=1&query=29B+Beach+Road+Christies+Beach+SA+5165",
-  orderUrl: "https://beachroadpizza.com.au/",
+  orderUrl: "/order",
+  instagramUrl: "https://www.instagram.com/beachroadpizza",
+  facebookUrl: "https://facebook.com/BeachRoadPizza",
   uberUrl:
     "https://www.ubereats.com/au/store/beach-road-pizza/030AM-V6QQKLRdzYjvj5RQ",
   doorDashUrl:

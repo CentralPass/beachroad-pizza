@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BUSINESS } from "../lib/site-data";
 
 export const metadata: Metadata = {
   title: "Our story",
@@ -64,6 +65,27 @@ export default function StoryPage() {
               <time>2024</time>
               <div><h3>Onkaparinga Business Award winner</h3><p>Restaurants, Bakeries and Cafés, larger business category.</p></div>
             </article>
+          </div>
+        </div>
+      </section>
+      <section className="story-social" aria-labelledby="story-social-title">
+        <div className="shell story-social-grid">
+          <div>
+            <p className="eyebrow">Follow the local</p>
+            <h2 id="story-social-title">Fresh from Beach Road.</h2>
+            <p>New pizzas, specials and a little behind-the-counter life from the Christies Beach team.</p>
+          </div>
+          <div className="social-links">
+            <a href={BUSINESS.instagramUrl} target="_blank" rel="noreferrer">
+              <span>Instagram</span>
+              <strong>@beachroadpizza</strong>
+              <small>Follow the latest food and specials ↗</small>
+            </a>
+            <a href={BUSINESS.facebookUrl} target="_blank" rel="noreferrer">
+              <span>Facebook</span>
+              <strong>Beach Road Pizza</strong>
+              <small>News and local updates ↗</small>
+            </a>
           </div>
         </div>
       </section>

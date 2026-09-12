@@ -21,9 +21,6 @@ export default function MenuPage() {
             </p>
           </div>
           <div className="page-art page-art-menu">
-            <span className="page-art-label page-art-label-one" aria-hidden="true">Gourmet</span>
-            <span className="page-art-label page-art-label-two" aria-hidden="true">Vegan + GF</span>
-            <span className="page-art-label page-art-label-three" aria-hidden="true">Pasta too</span>
             <img
               className="page-cutout page-cutout-menu"
               src="/images/cutouts/menu-special-cutout-v1.png"

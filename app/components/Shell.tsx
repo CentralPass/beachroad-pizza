@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { BUSINESS, HOURS } from "../lib/site-data";
 import { CursorToggle } from "./CursorToggle";
 import { StoreStatus } from "./StoreStatus";
+import { CartCount } from "./CartProvider";
 
 const nav = [
   { href: "/", label: "Home" },
@@ -25,7 +27,7 @@ export function Shell({ children }: { children: ReactNode }) {
       </div>
       <header className="site-header">
         <div className="shell header-inner">
-          <a className="wordmark" href="/" aria-label="Beach Road Pizza home">
+          <Link className="wordmark" href="/" aria-label="Beach Road Pizza home">
             <img
               className="header-logo"
               src="/brand/beach-road-pizza-logo-v1.png"
@@ -33,7 +35,7 @@ export function Shell({ children }: { children: ReactNode }) {
               width="1433"
               height="1098"
             />
-          </a>
+          </Link>
           <nav className="desktop-nav" aria-label="Primary navigation">
             {nav.map((item) => (
               <a key={item.href} href={item.href}>
@@ -41,8 +43,10 @@ export function Shell({ children }: { children: ReactNode }) {
               </a>
             ))}
           </nav>
-          <a className="button button-small" href={BUSINESS.orderUrl} target="_blank" rel="noreferrer">
-            Order online
+          <a className="button button-small header-order-button" href={BUSINESS.orderUrl}>
+            <span className="order-label-full">Order online</span>
+            <span className="order-label-short">Order</span>
+            <CartCount />
           </a>
           <details className="mobile-menu">
             <summary aria-label="Open website menu">Menu</summary>
@@ -52,8 +56,8 @@ export function Shell({ children }: { children: ReactNode }) {
                   {item.label}
                 </a>
               ))}
-              <a href={BUSINESS.orderUrl} target="_blank" rel="noreferrer">
-                Order online
+              <a href={BUSINESS.orderUrl}>
+                Order online <CartCount />
               </a>
             </nav>
           </details>

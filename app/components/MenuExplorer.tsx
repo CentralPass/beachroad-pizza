@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { BUSINESS, CATEGORIES, MENU, type MenuCategory } from "../lib/site-data";
+import { AddToCartControls } from "./AddToCartControls";
 
-export function MenuExplorer() {
+export function MenuExplorer({ orderPage = false }: { orderPage?: boolean }) {
   const [category, setCategory] = useState<"All" | MenuCategory>("Traditional pizzas");
   const [query, setQuery] = useState("");
   const [veganOnly, setVeganOnly] = useState(false);
@@ -88,6 +89,7 @@ export function MenuExplorer() {
                     <p>{item.sizes}</p>
                   </details>
                 ) : null}
+                <AddToCartControls item={item} />
               </div>
             </article>
           ))}
@@ -102,14 +104,14 @@ export function MenuExplorer() {
         </div>
       )}
 
-      <div className="menu-order-bar">
-        <p>
-          <strong>Ready to order?</strong> Confirm live availability, extras and your final total in the official ordering system.
-        </p>
-        <a className="button" href={BUSINESS.orderUrl} target="_blank" rel="noreferrer">
-          Order from Beach Road Pizza
-        </a>
-      </div>
+      {!orderPage ? (
+        <div className="menu-order-bar">
+          <p>
+            <strong>Ready to order?</strong> Add your favourites, choose pickup or delivery and review your total.
+          </p>
+          <a className="button" href={BUSINESS.orderUrl}>Review your order</a>
+        </div>
+      ) : null}
     </section>
   );
 }

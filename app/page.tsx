@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ReviewRail } from "./components/ReviewRail";
 import { StoreStatus } from "./components/StoreStatus";
+import { ScrollBackdrop } from "./components/ScrollBackdrop";
 import { BUSINESS, DEALS, HOURS } from "./lib/site-data";
 
 export const metadata: Metadata = {
@@ -54,15 +55,20 @@ export default function Home() {
   return (
     <>
       <section className="home-hero">
+        <ScrollBackdrop />
         <div className="shell hero-grid">
           <div className="hero-copy">
             <p className="eyebrow">Your Christies Beach local</p>
-            <h1>Great pizzas, great prices, for a great community.</h1>
+            <h1 className="hero-heading">
+              <span>Great pizzas.</span>
+              <span>Great prices.</span>
+              <span>For a great community.</span>
+            </h1>
             <p className="hero-lead">
               Generous toppings, family-friendly value and plenty of choice for nights by the beach.
             </p>
             <div className="button-row">
-              <a className="button" href={BUSINESS.orderUrl} target="_blank" rel="noreferrer">
+              <a className="button" href={BUSINESS.orderUrl}>
                 Order online
               </a>
               <a className="button button-secondary" href="/menu">
@@ -176,7 +182,7 @@ export default function Home() {
               <h3>{deal.title}</h3>
               <p>{deal.detail}</p>
               <small>{deal.note}</small>
-              <a href={deal.href} target="_blank" rel="noreferrer">
+              <a href={deal.href}>
                 {deal.action}
               </a>
             </article>
