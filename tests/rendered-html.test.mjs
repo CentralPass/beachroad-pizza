@@ -36,6 +36,8 @@ test("server-renders the finished Beach Road Pizza homepage", async () => {
   assert.match(html, /2024 Onkaparinga Business Award winner/);
   assert.match(html, /Straight from the menu/);
   assert.match(html, /\$25 Large Deal/);
+  assert.match(html, /deals-cheesy-double-cutout-v2\.png/);
+  assert.doesNotMatch(html, />Peri Peri Chicken<|page-art-label/);
   assert.match(html, /pizza-cheese-pull-v1\.mp4/);
   assert.match(html, /pasta-over-flame-v1\.mp4/);
   assert.match(html, /href="\/menu"/);
@@ -84,6 +86,8 @@ test("server-renders enquiry FAQs and official social links", async () => {
   const enquiryHtml = await enquiryResponse.text();
   assert.match(enquiryHtml, /Frequently asked questions\./);
   assert.match(enquiryHtml, /Do you have gluten-free pizza bases\?/);
+  assert.match(enquiryHtml, /enquire-lamb-yiros-cutout-v2\.png/);
+  assert.doesNotMatch(enquiryHtml, /class="page-art-label/);
 
   const storyResponse = await render("/our-story");
   assert.equal(storyResponse.status, 200);

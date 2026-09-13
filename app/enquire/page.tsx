@@ -21,15 +21,12 @@ export default function EnquirePage() {
             </p>
           </div>
           <div className="page-art page-art-enquire">
-            <span className="page-art-label page-art-label-one" aria-hidden="true">Large orders</span>
-            <span className="page-art-label page-art-label-two" aria-hidden="true">Local team</span>
-            <span className="page-art-label page-art-label-three" aria-hidden="true">Dietary help</span>
             <img
               className="page-cutout page-cutout-enquire"
-              src="/images/cutouts/enquire-chicken-cutout-v1.png"
-              alt="A chicken pizza from Beach Road Pizza"
-              width="1254"
-              height="1254"
+              src="/images/cutouts/enquire-lamb-yiros-cutout-v2.png"
+              alt="A whole Lamb Yiros pizza from Beach Road Pizza"
+              width="941"
+              height="941"
               fetchPriority="high"
             />
           </div>

@@ -51,6 +51,8 @@ const movingFavourites = [
   },
 ];
 
+const dealArcText = Array.from("BIG-NIGHT DEALS");
+
 export default function Home() {
   return (
     <>
@@ -91,7 +93,6 @@ export default function Home() {
               height="1254"
               fetchPriority="high"
             />
-            <p>Peri Peri Chicken</p>
           </div>
         </div>
       </section>
@@ -165,15 +166,23 @@ export default function Home() {
       </section>
 
       <section className="deal-section" id="deals" aria-labelledby="deal-title">
-        <div className="shell compact-section-head">
-          <div>
+        <div className="shell compact-section-head deal-section-head">
+          <div className="deal-section-heading-copy">
             <p className="eyebrow">Straight from the menu</p>
-            <h2 id="deal-title">Big-night deals.</h2>
+            <h2 className="sr-only" id="deal-title">Big-night deals.</h2>
+            <p>Pizza, bread and drinks bundled for easy family and group orders.</p>
           </div>
-          <p>Pizza, bread and drinks bundled for easy family and group orders.</p>
         </div>
-        <div className="shell deal-feature">
-          <img src="/images/food/Beach Road Pizza_Cheesy Double.jpg" alt="A golden Cheesy Double pizza from Beach Road Pizza" width="1600" height="900" loading="lazy" />
+        <div className="shell deal-feature deal-feature-reframed">
+          <div className="deal-pizza-visual">
+            <div className="deal-arc" aria-hidden="true">
+              {dealArcText.map((letter, index) => {
+                const angle = -58 + (116 * index) / (dealArcText.length - 1);
+                return <span key={`${letter}-${index}`} style={{ rotate: `${angle}deg` }}>{letter === " " ? "\u00a0" : letter}</span>;
+              })}
+            </div>
+            <img src="/images/cutouts/deals-cheesy-double-cutout-v2.png" alt="A whole golden Cheesy Double pizza from Beach Road Pizza" width="941" height="941" loading="lazy" />
+          </div>
           <p>Delivery starts from $8. Confirm final availability and pricing when ordering.</p>
         </div>
         <div className="shell deal-list">
