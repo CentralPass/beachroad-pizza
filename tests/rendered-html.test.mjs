@@ -44,6 +44,7 @@ test("server-renders the finished Beach Road Pizza homepage", async () => {
   assert.doesNotMatch(html, /href="\/catering"/);
   assert.match(html, /href="\/our-story"/);
   assert.match(html, /href="\/enquire"/);
+  assert.doesNotMatch(html, /Pizza cursor/i);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 

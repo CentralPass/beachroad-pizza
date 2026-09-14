@@ -1358,18 +1358,6 @@ textarea {
   to { transform: translateX(calc(-50% - 5px)); }
 }
 
-@media (hover: hover) and (pointer: fine) {
-  html.pizza-cursor,
-  html.pizza-cursor a,
-  html.pizza-cursor button,
-  html.pizza-cursor summary,
-  html.pizza-cursor input,
-  html.pizza-cursor select,
-  html.pizza-cursor textarea {
-    cursor: url("/cursor/pizza-photo-v3.jpg") 12 12, auto;
-  }
-}
-
 @media (min-width: 720px) {
   :root {
     --shell: min(100% - 46px, 1120px);
@@ -1946,18 +1934,6 @@ textarea {
 
 .footer-button {
   border: 1px solid var(--hairline);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  html.pizza-cursor,
-  html.pizza-cursor a,
-  html.pizza-cursor button,
-  html.pizza-cursor summary,
-  html.pizza-cursor input,
-  html.pizza-cursor select,
-  html.pizza-cursor textarea {
-    cursor: url("/cursor/pizza-cutout-v4.png") 10 10, auto;
-  }
 }
 
 @media (min-width: 720px) {
@@ -3695,4 +3671,34 @@ h3 {
     margin-top: -5%;
     font-size: 0.78rem;
   }
+
+  /* Keep the rotating pizza fully inside the phone viewport and in its own row. */
+  .hero-grid {
+    gap: 0;
+  }
+
+  .hero-art {
+    width: min(94vw, 470px);
+    max-width: 100%;
+    margin: 12px auto 10px;
+    padding: 2px;
+    clip-path: none;
+    background: transparent;
+  }
+
+  .hero-art img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+    transform: none;
+  }
+
+  .hero-art .spin-food {
+    animation-name: phone-spin;
+  }
+}
+
+@keyframes phone-spin {
+  to { transform: rotate(360deg); }
 }

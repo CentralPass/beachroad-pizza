@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { BUSINESS, HOURS } from "../lib/site-data";
-import { CursorToggle } from "./CursorToggle";
 import { StoreStatus } from "./StoreStatus";
 import { CartCount } from "./CartProvider";
 
@@ -94,7 +93,6 @@ export function Shell({ children }: { children: ReactNode }) {
             </div>
           </details>
           <a href="/privacy">Privacy</a>
-          <CursorToggle />
         </div>
         <div className="shell footer-bottom">
           <span>© {new Date().getFullYear()} Beach Road Pizza</span>
