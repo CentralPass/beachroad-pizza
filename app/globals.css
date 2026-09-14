@@ -3702,3 +3702,34 @@ h3 {
 @keyframes phone-spin {
   to { transform: rotate(360deg); }
 }
+
+/* A playful boardwalk pattern with enough quiet space for the hero copy. */
+.home-hero {
+  background-color: var(--cream);
+  background-image:
+    radial-gradient(circle, rgba(245, 142, 104, 0.34) 0 8px, transparent 8.5px),
+    radial-gradient(circle, rgba(145, 215, 232, 0.4) 0 6px, transparent 6.5px);
+  background-position: 0 0, 38px 38px;
+  background-size: 76px 76px;
+}
+
+.deal-arc span {
+  font-size: clamp(1.45rem, 3.7vw, 3.15rem);
+  font-weight: 900;
+  -webkit-text-stroke: 0.8px var(--ink);
+  text-shadow:
+    0.45px 0 var(--ink),
+    -0.45px 0 var(--ink);
+}
+
+@media (max-width: 719px) {
+  .home-hero {
+    background-position: 0 0, 30px 30px;
+    background-size: 60px 60px;
+  }
+
+  .deal-arc span {
+    font-size: clamp(1.28rem, 7vw, 1.9rem);
+    -webkit-text-stroke-width: 0.55px;
+  }
+}
