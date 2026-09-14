@@ -3703,14 +3703,41 @@ h3 {
   to { transform: rotate(360deg); }
 }
 
-/* A playful boardwalk pattern with enough quiet space for the hero copy. */
+/* Large organic colour fields inspired by bold modern pizzeria art direction. */
 .home-hero {
   background-color: var(--cream);
-  background-image:
-    radial-gradient(circle, rgba(245, 142, 104, 0.34) 0 8px, transparent 8.5px),
-    radial-gradient(circle, rgba(145, 215, 232, 0.4) 0 6px, transparent 6.5px);
-  background-position: 0 0, 38px 38px;
-  background-size: 76px 76px;
+  background-image: none;
+}
+
+.home-hero::before,
+.home-hero::after {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  content: "";
+  pointer-events: none;
+}
+
+.home-hero::before {
+  top: -29%;
+  right: -9%;
+  width: min(47vw, 720px);
+  aspect-ratio: 1.22;
+  border-radius: 61% 39% 48% 52% / 42% 58% 42% 58% !important;
+  background: #e85f49;
+  opacity: 0.78;
+  transform: rotate(-14deg);
+}
+
+.home-hero::after {
+  bottom: -42%;
+  left: -12%;
+  width: min(38vw, 540px);
+  aspect-ratio: 1.16;
+  border-radius: 42% 58% 63% 37% / 57% 38% 62% 43% !important;
+  background: #f47b5e;
+  opacity: 0.72;
+  transform: rotate(18deg);
 }
 
 .deal-arc span {
@@ -3723,9 +3750,18 @@ h3 {
 }
 
 @media (max-width: 719px) {
-  .home-hero {
-    background-position: 0 0, 30px 30px;
-    background-size: 60px 60px;
+  .home-hero::before {
+    top: 54%;
+    right: -34%;
+    width: 88vw;
+    opacity: 0.76;
+  }
+
+  .home-hero::after {
+    bottom: -15%;
+    left: -31%;
+    width: 72vw;
+    opacity: 0.68;
   }
 
   .deal-arc span {
