@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BUSINESS } from "../lib/site-data";
+import { useVenue } from "./providers/VenueProvider";
 
 type FormState = {
   name: string;
@@ -22,6 +22,7 @@ const initialState: FormState = {
 };
 
 export function EnquiryForm() {
+  const venue = useVenue();
   const [form, setForm] = useState<FormState>(initialState);
   const [prepared, setPrepared] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -60,8 +61,8 @@ export function EnquiryForm() {
         <h2>Call the shop and keep this on screen.</h2>
         <pre>{summary}</pre>
         <div className="button-row">
-          <a className="button" href={BUSINESS.phoneHref}>
-            Call {BUSINESS.phoneDisplay}
+          <a className="button" href={venue.telHref}>
+            Call {venue.phone}
           </a>
           <button className="button button-secondary" type="button" onClick={copySummary}>
             {copied ? "Copied" : "Copy enquiry"}

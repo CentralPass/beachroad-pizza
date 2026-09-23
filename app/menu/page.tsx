@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
+import { BreadcrumbJsonLd } from "../components/BreadcrumbJsonLd";
 import { MenuExplorer } from "../components/MenuExplorer";
 import { MotionRail } from "../components/MotionRail";
+import { fetchMenu } from "../lib/server-api";
+
+// Rendered from the live menu for search engines; the page refreshes it again in the browser.
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Menu",
@@ -8,9 +13,11 @@ export const metadata: Metadata = {
     "Search Beach Road Pizza's traditional, gourmet and vegan pizzas, plus sides, pasta and schnitzels with current direct-order prices.",
 };
 
-export default function MenuPage() {
+export default async function MenuPage() {
+  const menu = await fetchMenu();
   return (
     <>
+      <BreadcrumbJsonLd name="Menu" path="/menu" />
       <section className="inner-hero menu-hero">
         <div className="shell inner-hero-grid">
           <div>
@@ -55,7 +62,7 @@ export default function MenuPage() {
             <p>Seven builds, all served with chips—from the classic Snitty to Lamb with tzatziki.</p>
           </div>
         </section>
-        <MenuExplorer />
+        <MenuExplorer initialMenu={menu} />
       </div>
     </>
   );

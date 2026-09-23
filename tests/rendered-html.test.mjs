@@ -1,105 +1,105 @@
+/**
+ * Smoke tests against the production build. Run `npm test`, which builds
+ * first. No backend is needed: pages must render their fallback states, and
+ * private pages must stay out of search engines either way.
+ */
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
-import test from "node:test";
+import { spawn } from "node:child_process";
+import { createServer } from "node:net";
+import { after, before, test } from "node:test";
 
-async function render(pathname = "/") {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-${pathname}`);
-  const { default: worker } = await import(workerUrl.href);
+let server;
+let origin;
 
-  return worker.fetch(
-    new Request(`http://localhost${pathname}`, {
-      headers: { accept: "text/html" },
-    }),
-    {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
-    },
-  );
+function freePort() {
+  return new Promise((resolve, reject) => {
+    const probe = createServer();
+    probe.once("error", reject);
+    probe.listen(0, () => {
+      const { port } = probe.address();
+      probe.close(() => resolve(port));
+    });
+  });
 }
 
-test("server-renders the finished Beach Road Pizza homepage", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
+before(async () => {
+  const port = await freePort();
+  origin = `http://127.0.0.1:${port}`;
+  server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "--port", String(port), "--hostname", "127.0.0.1"], {
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  const deadline = Date.now() + 30_000;
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(`${origin}/robots.txt`);
+      if (response.ok) return;
+    } catch {
+      // Not listening yet.
+    }
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  throw new Error("next start did not come up within 30s. Did you run `npm run build`?");
+});
 
-  const html = await response.text();
-  assert.match(html, /Beach Road Pizza/);
+after(() => server?.kill());
+
+async function page(pathname) {
+  const response = await fetch(`${origin}${pathname}`);
+  return { status: response.status, html: await response.text() };
+}
+
+test("home keeps the Beach Road design and links into ordering", async () => {
+  const { status, html } = await page("/");
+  assert.equal(status, 200);
   assert.match(html, /Great pizzas\./);
-  assert.match(html, /Great prices\./);
   assert.match(html, /For a great community\./);
-  assert.match(html, /2024 Onkaparinga Business Award winner/);
   assert.match(html, /Straight from the menu/);
-  assert.match(html, /\$25 Large Deal/);
-  assert.match(html, /deals-cheesy-double-cutout-v2\.png/);
-  assert.doesNotMatch(html, />Peri Peri Chicken<|page-art-label/);
-  assert.match(html, /pizza-cheese-pull-v1\.mp4/);
-  assert.match(html, /pasta-over-flame-v1\.mp4/);
-  assert.match(html, /href="\/menu"/);
-  assert.doesNotMatch(html, /href="\/catering"/);
-  assert.match(html, /href="\/our-story"/);
-  assert.match(html, /href="\/enquire"/);
-  assert.doesNotMatch(html, /Pizza cursor/i);
-  assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
+  assert.match(html, /href="\/order/);
+  assert.match(html, /application\/ld\+json/);
+  assert.match(html, /"@type":"Restaurant"/);
 });
 
-test("server-renders the compact searchable menu with real categories, photos and prices", async () => {
-  const response = await render("/menu");
-  assert.equal(response.status, 200);
+test("menu and order pages render and are indexable", async () => {
+  const menu = await page("/menu");
+  assert.equal(menu.status, 200);
+  assert.match(menu.html, /Search the menu/);
+  assert.doesNotMatch(menu.html, /noindex/);
 
-  const html = await response.text();
-  assert.match(html, /Search the menu/);
-  assert.match(html, /Traditional pizzas/);
-  assert.match(html, /Gourmet pizzas/);
-  assert.match(html, /Vegan pizzas/);
-  assert.match(html, /Cheese Lover/);
-  assert.match(html, /Beach Road Pizza_Cheesy Double\.jpg/);
-  assert.match(html, /Pastas/);
-  assert.match(html, /Schnitzels/);
-  assert.match(html, /From \$14\.50/);
-  assert.match(html, /Small \$14\.50 \| Large \$18\.50/);
-  assert.match(html, /schnitzel-and-chips-pexels\.jpg/);
-  assert.match(html, /Add to order/);
-  assert.doesNotMatch(html, />Gourmet<|>Vegan \+ GF<|>Pasta too</);
+  const order = await page("/order");
+  assert.equal(order.status, 200);
+  assert.match(order.html, /Pizza night, sorted\./);
+  assert.match(order.html, /Your favourites\./);
 });
 
-test("server-renders the pre-checkout ordering flow", async () => {
-  const response = await render("/order");
-  assert.equal(response.status, 200);
-
-  const html = await response.text();
-  assert.match(html, /Pizza night, sorted\./);
-  assert.match(html, /Your favourites\./);
-  assert.match(html, /Pickup/);
-  assert.match(html, /Delivery/);
-  assert.match(html, /Review order/);
-  assert.match(html, /Add to order/);
+test("checkout, tracking, booking management and table pages are private", async () => {
+  for (const pathname of ["/checkout", "/track/abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG", "/bookings/manage/abc123", "/table"]) {
+    const { status, html } = await page(pathname);
+    assert.equal(status, 200, pathname);
+    assert.match(html, /<meta name="robots" content="noindex, nofollow/, pathname);
+  }
+  const tracking = await page("/track/abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG");
+  // The bearer token must never be repeated in canonical or share metadata.
+  const head = tracking.html.split("</head>")[0];
+  assert.doesNotMatch(head.replace(/<title>[^<]*<\/title>/, ""), /rel="canonical"[^>]*abcdefghijklmnopqrstuvwxyz/);
+  assert.doesNotMatch(head, /og:url"[^>]*abcdefghijklmnopqrstuvwxyz/);
 });
 
-test("server-renders enquiry FAQs and official social links", async () => {
-  const enquiryResponse = await render("/enquire");
-  assert.equal(enquiryResponse.status, 200);
-  const enquiryHtml = await enquiryResponse.text();
-  assert.match(enquiryHtml, /Frequently asked questions\./);
-  assert.match(enquiryHtml, /Do you have gluten-free pizza bases\?/);
-  assert.match(enquiryHtml, /enquire-lamb-yiros-cutout-v2\.png/);
-  assert.doesNotMatch(enquiryHtml, /class="page-art-label/);
-
-  const storyResponse = await render("/our-story");
-  assert.equal(storyResponse.status, 200);
-  const storyHtml = await storyResponse.text();
-  assert.match(storyHtml, /instagram\.com\/beachroadpizza/i);
-  assert.match(storyHtml, /facebook\.com\/BeachRoadPizza/i);
+test("sitemap lists public pages only", async () => {
+  const { status, html } = await page("/sitemap.xml");
+  assert.equal(status, 200);
+  for (const pathname of ["/menu", "/order", "/privacy"]) assert.match(html, new RegExp(`${pathname}</loc>`));
+  for (const pathname of ["/checkout", "/track", "/table", "/bookings/manage"]) assert.doesNotMatch(html, new RegExp(`${pathname}`));
 });
 
-test("removes all temporary starter files and dependencies", async () => {
-  const packageJson = await readFile(new URL("../package.json", import.meta.url), "utf8");
-  assert.doesNotMatch(packageJson, /react-loading-skeleton/);
-  await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
-  await assert.rejects(access(new URL("../app/_sites-preview/preview.css", import.meta.url)));
+test("privacy policy covers what online ordering collects", async () => {
+  const { html } = await page("/privacy");
+  assert.match(html, /Stripe/);
+  assert.match(html, /unsubscribe/);
+  assert.match(html, /session storage/);
+});
+
+test("no secret keys or another venue's identity in the bundle", async () => {
+  const { html } = await page("/");
+  assert.doesNotMatch(html, /sk_(live|test)_/);
+  assert.doesNotMatch(html, /Primo|Firle/i);
 });

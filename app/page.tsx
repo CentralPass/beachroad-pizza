@@ -1,8 +1,60 @@
 import type { Metadata } from "next";
+import { PromoModal } from "./components/PromoModal";
 import { ReviewRail } from "./components/ReviewRail";
 import { StoreStatus } from "./components/StoreStatus";
 import { ScrollBackdrop } from "./components/ScrollBackdrop";
-import { BUSINESS, DEALS, HOURS } from "./lib/site-data";
+import { HoursRows, TodayNote, VenueAddress, VenuePhoneLink } from "./components/VenueBits";
+import { formatPrice } from "./lib/format";
+import { dealItems } from "./lib/menu";
+import { fetchHours, fetchMenu } from "./lib/server-api";
+import { BUSINESS } from "./lib/site-data";
+import type { HoursResponse } from "./lib/types";
+import { FALLBACK, SITE_URL, STATIC } from "./lib/venue";
+
+// Deals and hours come from the live menu and hours; re-read every minute.
+export const revalidate = 60;
+
+const DAY_SCHEMA = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+function restaurantJsonLd(hours: HoursResponse | null) {
+  const openingHours = (hours?.store_hours || [])
+    .filter((row) => row.is_open && row.open_time && row.close_time)
+    .map((row) => ({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: DAY_SCHEMA[row.day_of_week],
+      opens: row.open_time!.slice(0, 5),
+      closes: row.close_time!.slice(0, 5),
+    }));
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Restaurant",
+        "@id": `${SITE_URL}/#restaurant`,
+        name: FALLBACK.name,
+        url: `${SITE_URL}/`,
+        logo: `${SITE_URL}/brand/beach-road-pizza-logo-v1.png`,
+        image: `${SITE_URL}/og-v3.png`,
+        telephone: FALLBACK.phone,
+        priceRange: "$",
+        servesCuisine: ["Pizza", "Italian"],
+        menu: `${SITE_URL}/menu`,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "29B Beach Road",
+          addressLocality: STATIC.suburb,
+          addressRegion: "SA",
+          postalCode: "5165",
+          addressCountry: "AU",
+        },
+        ...(openingHours.length ? { openingHoursSpecification: openingHours } : {}),
+        sameAs: [STATIC.social.instagram, STATIC.social.facebook],
+        potentialAction: { "@type": "OrderAction", target: `${SITE_URL}/order` },
+      },
+      { "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: FALLBACK.name, inLanguage: "en-AU" },
+    ],
+  };
+}
 
 export const metadata: Metadata = {
   title: "Pizza, pasta and local value in Christies Beach",
@@ -53,9 +105,13 @@ const movingFavourites = [
 
 const dealArcText = Array.from("BIG-NIGHT DEALS");
 
-export default function Home() {
+export default async function Home() {
+  const [menu, hours] = await Promise.all([fetchMenu(), fetchHours()]);
+  const deals = dealItems(menu?.categories);
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantJsonLd(hours)) }} />
+      <PromoModal />
       <section className="home-hero">
         <ScrollBackdrop />
         <div className="shell hero-grid">
@@ -183,19 +239,26 @@ export default function Home() {
             </div>
             <img src="/images/cutouts/deals-cheesy-double-cutout-v2.png" alt="A whole golden Cheesy Double pizza from Beach Road Pizza" width="941" height="941" loading="lazy" />
           </div>
-          <p>Delivery starts from $8. Confirm final availability and pricing when ordering.</p>
+          <p>Order pickup online, or get delivery through Uber Eats and DoorDash.</p>
         </div>
         <div className="shell deal-list">
-          {DEALS.map((deal) => (
-            <article key={deal.title}>
-              <h3>{deal.title}</h3>
-              <p>{deal.detail}</p>
-              <small>{deal.note}</small>
-              <a href={deal.href}>
-                {deal.action}
+          {deals.length ? deals.map((deal) => (
+            <article key={deal.id}>
+              <h3>{formatPrice(deal.base_price)} {deal.name}</h3>
+              {deal.description ? <p>{deal.description}</p> : null}
+              <small>{deal.offer ? deal.offer.badge_label : "Beach Road Pizza menu deal."}</small>
+              <a href={`/order#item-${deal.id}`}>
+                Order this deal
               </a>
             </article>
-          ))}
+          )) : (
+            <article>
+              <h3>Tonight&apos;s deals</h3>
+              <p>Pizza, garlic bread and drink bundles for families and groups.</p>
+              <small>Live prices are on the order page.</small>
+              <a href="/order">See the deals</a>
+            </article>
+          )}
         </div>
       </section>
 
@@ -254,16 +317,15 @@ export default function Home() {
           <div>
             <p className="eyebrow">Tonight on Beach Road</p>
             <h2 id="visit-title">Order, collect, find a sunset.</h2>
-            <p>{BUSINESS.address}</p>
+            <p><VenueAddress /></p>
             <div className="button-row">
               <a className="button" href={BUSINESS.mapsUrl} target="_blank" rel="noreferrer">Directions</a>
-              <a className="button button-secondary" href={BUSINESS.phoneHref}>Call the shop</a>
+              <VenuePhoneLink className="button button-secondary" label="Call the shop" />
             </div>
           </div>
           <div className="hours-list">
-            {HOURS.map((row) => (
-              <div key={row.days}><span>{row.days}</span><strong>{row.hours}</strong></div>
-            ))}
+            <HoursRows variant="list" />
+            <TodayNote />
             <small>Public holiday hours can change. Call to confirm.</small>
           </div>
         </div>

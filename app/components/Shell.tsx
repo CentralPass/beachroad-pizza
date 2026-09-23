@@ -1,8 +1,11 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { BUSINESS, HOURS } from "../lib/site-data";
+import { BUSINESS } from "../lib/site-data";
 import { StoreStatus } from "./StoreStatus";
 import { CartCount } from "./CartProvider";
+import { SiteNotice } from "./SiteNotice";
+import { Chrome } from "./Chrome";
+import { BookingsNavLink, HoursRows, TodayNote, VenuePhoneLink } from "./VenueBits";
 
 const nav = [
   { href: "/", label: "Home" },
@@ -14,14 +17,15 @@ const nav = [
 export function Shell({ children }: { children: ReactNode }) {
   return (
     <>
+      <Chrome>
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
       <div className="service-bar">
         <div className="shell service-bar-inner">
           <StoreStatus />
-          <a href={BUSINESS.phoneHref}>Call {BUSINESS.phoneDisplay}</a>
-          <span>Christies Beach pickup and delivery</span>
+          <VenuePhoneLink />
+          <span>Order pickup online · delivery on Uber Eats and DoorDash</span>
         </div>
       </div>
       <header className="site-header">
@@ -41,6 +45,7 @@ export function Shell({ children }: { children: ReactNode }) {
                 {item.label}
               </a>
             ))}
+            <BookingsNavLink />
           </nav>
           <a className="button button-small header-order-button" href={BUSINESS.orderUrl}>
             <span className="order-label-full">Order online</span>
@@ -55,6 +60,7 @@ export function Shell({ children }: { children: ReactNode }) {
                   {item.label}
                 </a>
               ))}
+              <BookingsNavLink />
               <a href={BUSINESS.orderUrl}>
                 Order online <CartCount />
               </a>
@@ -62,7 +68,10 @@ export function Shell({ children }: { children: ReactNode }) {
           </details>
         </div>
       </header>
+      <SiteNotice />
+      </Chrome>
       <main id="main-content">{children}</main>
+      <Chrome>
       <footer className="site-footer">
         <div className="shell footer-main">
           <div className="footer-brand">
@@ -79,16 +88,20 @@ export function Shell({ children }: { children: ReactNode }) {
             </div>
           </div>
           <div className="footer-actions">
-            <a href={BUSINESS.phoneHref}>Call {BUSINESS.phoneDisplay}</a>
+            <VenuePhoneLink />
             <a href={BUSINESS.mapsUrl} target="_blank" rel="noreferrer">Directions</a>
+            <a href="/order">Order online</a>
             {nav.slice(1).map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
+            <BookingsNavLink />
+            <a href="/connect">Deals by email</a>
           </div>
         </div>
         <div className="shell footer-meta">
           <details>
             <summary>Opening hours</summary>
             <div>
-              {HOURS.map((row) => <p key={row.days}><strong>{row.days}</strong>{row.hours}</p>)}
+              <HoursRows variant="footer" />
+              <TodayNote />
               <small>Public holiday hours may differ. Call to confirm.</small>
             </div>
           </details>
@@ -99,6 +112,7 @@ export function Shell({ children }: { children: ReactNode }) {
           <span>Christies Beach, South Australia</span>
         </div>
       </footer>
+      </Chrome>
     </>
   );
 }

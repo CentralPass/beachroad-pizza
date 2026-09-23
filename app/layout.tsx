@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./ordering.css";
 import { Shell } from "./components/Shell";
 import { CartProvider } from "./components/CartProvider";
+import { GoogleTag } from "./components/GoogleTag";
+import { StoreStatusProvider } from "./components/providers/StoreStatusProvider";
+import { ToastProvider } from "./components/providers/ToastProvider";
+import { VenueProvider } from "./components/providers/VenueProvider";
+import { SITE_URL } from "./lib/venue";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://beachroadpizza.com.au"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Beach Road Pizza | Christies Beach",
     template: "%s | Beach Road Pizza",
@@ -46,9 +52,16 @@ export default function RootLayout({
   return (
     <html lang="en-AU">
       <body>
-        <CartProvider>
-          <Shell>{children}</Shell>
-        </CartProvider>
+        <VenueProvider>
+          <StoreStatusProvider>
+            <ToastProvider>
+              <CartProvider>
+                <Shell>{children}</Shell>
+              </CartProvider>
+            </ToastProvider>
+          </StoreStatusProvider>
+        </VenueProvider>
+        <GoogleTag />
       </body>
     </html>
   );
