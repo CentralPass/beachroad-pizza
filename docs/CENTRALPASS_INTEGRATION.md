@@ -23,9 +23,9 @@ a backlog to do in one pass, checked against Primo. Found while testing:
    upserts with `ON CONFLICT (email)`, but migration 017 dropped the unique
    email constraint, so `POST /api/subscriptions` returns 500. Primo's database
    went through the same migrations, so its sign-up is probably broken too.
-   Fix: a partial unique index on `lower(email)` for rows with an email, or a
-   select-then-update in the route. Until then the Beach Road site shows a
-   friendly error on `/connect`.
+   **Fixed in [centralpass-platform#16](https://github.com/CentralPass/centralpass-platform/pull/16)**
+   without a schema change; it goes live for every venue once merged. Until
+   then the Beach Road site shows a friendly error on `/connect`.
 2. **A new backend starts as Primo.** Migrations seed `restaurant_name =
    'Caffe Primo Firle'` and 7am to 3pm hours. `scripts/setup-venue.mjs`
    overwrites them for Beach Road; the platform should seed neutral values.
