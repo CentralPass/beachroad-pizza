@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BreadcrumbJsonLd } from "../components/BreadcrumbJsonLd";
 import { BUSINESS } from "../lib/site-data";
 
 export const metadata: Metadata = {
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 export default function StoryPage() {
   return (
     <>
+      <BreadcrumbJsonLd name="Our story" path="/our-story" />
       <section className="story-hero">
         <div className="shell story-hero-grid">
           <div>

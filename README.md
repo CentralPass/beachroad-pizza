@@ -1,98 +1,83 @@
-# vinext-starter
+# Beach Road Pizza website
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+The customer website for Beach Road Pizza, Christies Beach. It is the bespoke
+storefront half of a CentralPass venue: the design lives here, and everything
+the owner manages (menu, prices, deals, hours, pause, offers, promo codes,
+bookings) comes from the venue's own CentralPass backend over HTTP.
 
-## Prerequisites
+```text
+this site ──HTTP + Socket.io──> Beach Road backend (centralpass-platform/backend)
+                                  ├── admin portal   (centralpass-platform/admin-portal)
+                                  ├── staff dashboard(centralpass-platform/staff-dashboard)
+                                  └── /api/platform  <── CentralPass Console
+```
 
-- Node.js `>=22.13.0`
+The site never imports platform code and holds no secrets. Its only link to
+CentralPass is `NEXT_PUBLIC_CENTRALPASS_API_URL`. See
+[docs/CENTRALPASS_INTEGRATION.md](docs/CENTRALPASS_INTEGRATION.md) for the
+wider plan and [docs/SETUP.md](docs/SETUP.md) for provisioning.
 
-## Quick Start
+## What the site does
+
+| Route | What it is |
+|---|---|
+| `/` | Home. Deals from the live Deals category, live hours, featured-offer popup, restaurant structured data |
+| `/menu` | Browse and search the live menu (server-rendered for search engines, refreshed in the browser) |
+| `/order` | Live ordering: sizes and options, Offers group, sold-out updates in real time, closed/paused/surcharge notices, cart with promo codes priced by the server |
+| `/checkout` | Pickup details, ASAP or a time slot, pay in store or by card (Stripe Payment Element), receipt and tax invoice |
+| `/track/[token]` | Private order tracking. **The backend emails and texts customers this link**, built from its `PUBLIC_SITE_URL` |
+| `/bookings` | Native table bookings, shown only when bookings are on and entitled |
+| `/bookings/manage/[token]` | Guest booking management (cancel, request a change). **Linked from booking confirmations** |
+| `/table` | QR table ordering. **The admin portal's QR signs point here** (backend `TABLE_ORDERING_URL`) |
+| `/connect` | Mailing-list sign-up with explicit consent |
+| `/enquire`, `/our-story`, `/privacy` | Venue pages |
+
+Online orders are pickup only. Delivery stays on Uber Eats and DoorDash until
+CentralPass delivery ships.
+
+The backend enforces everything: prices, offers, surcharges, hours, pauses,
+pickup times and availability. The browser only previews them.
+
+## Run locally
+
+Node 22.13 or newer. Run one CentralPass backend on `localhost:3000` (see
+`centralpass-platform/README.md`) with `http://localhost:3001` in its
+`CORS_ORIGIN` and `PUBLIC_SITE_URL`.
 
 ```bash
+cp .env.example .env.local
 npm install
 npm run dev
-npm run build
 ```
 
-This starter does not use `wrangler.jsonc`.
+Open `http://localhost:3001`.
 
-## Included Shape
+## Load Beach Road into a new backend
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
+`scripts/setup-venue.mjs` signs in as the venue admin and loads the venue
+details, trading hours, booking mode and the full menu (sizes as shared option
+groups, deals with pizza choices) from `scripts/menu-source.json`. It refuses
+to touch a backend that already has a menu.
 
-## Workspace Auth Headers
-
-OpenAI workspace sites can read the current user's email from
-`oai-authenticated-user-email`.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```bash
+CENTRALPASS_API_URL=https://<backend> ADMIN_EMAIL=<admin email> ADMIN_PASSWORD=<admin password> SITE_URL=https://<this site> npm run setup:venue
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+Menu photos upload to the backend's R2 bucket. Without R2 yet, they point at
+this site's own `/images/food/...` files when `SITE_URL` is https.
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+## Deploy (Railway)
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+A standard Next.js app: build `npm run build`, start `npm start` (Next reads
+Railway's `PORT`). Set the `NEXT_PUBLIC_*` variables from `.env.example` on the
+service; they are compiled in, so redeploy after changing them.
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+## Tests
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+```bash
+npm test
+```
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
-
-## Useful Commands
-
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
-
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+Builds, starts the production server and checks the key pages, private-page
+`noindex`, the sitemap, the privacy policy and the absence of secret keys or
+another venue's details.

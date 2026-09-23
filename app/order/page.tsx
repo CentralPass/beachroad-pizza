@@ -1,29 +1,29 @@
 import type { Metadata } from "next";
-import { MenuExplorer } from "../components/MenuExplorer";
-import { OrderBuilder } from "../components/OrderBuilder";
+import { BreadcrumbJsonLd } from "../components/BreadcrumbJsonLd";
+import { OrderExperience } from "../components/OrderExperience";
+import { fetchMenu } from "../lib/server-api";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Order online",
-  description: "Build a Beach Road Pizza order for pickup or delivery, ready for secure checkout.",
+  title: "Order online for pickup",
+  description: "Order Beach Road Pizza online for pickup from Christies Beach. Choose your sizes, pick a time and pay by card or in store.",
 };
 
-export default function OrderPage() {
+export default async function OrderPage() {
+  const menu = await fetchMenu();
   return (
     <>
+      <BreadcrumbJsonLd name="Order online" path="/order" />
       <section className="order-hero">
         <div className="shell">
           <p className="eyebrow">Order direct</p>
           <h1>Pizza night, sorted.</h1>
-          <p>Choose your favourites, set pickup or delivery and review everything before checkout.</p>
+          <p>Choose your favourites, pick a pickup time and pay online or in store.</p>
         </div>
       </section>
       <div className="shell order-page">
-        <OrderBuilder />
-        <section className="order-menu-section" aria-labelledby="order-menu-heading">
-          <p className="eyebrow">Still choosing?</p>
-          <h2 id="order-menu-heading">Add something delicious.</h2>
-          <MenuExplorer orderPage />
-        </section>
+        <OrderExperience initialMenu={menu} />
       </div>
     </>
   );

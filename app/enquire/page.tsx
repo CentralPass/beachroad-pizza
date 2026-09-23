@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { BreadcrumbJsonLd } from "../components/BreadcrumbJsonLd";
 import { EnquiryForm } from "../components/EnquiryForm";
 import { MotionRail } from "../components/MotionRail";
-import { BUSINESS, HOURS } from "../lib/site-data";
+import { BUSINESS } from "../lib/site-data";
+import { HoursRows, VenueAddress, VenuePhoneLink } from "../components/VenueBits";
 
 export const metadata: Metadata = {
   title: "Enquire",
@@ -11,6 +13,7 @@ export const metadata: Metadata = {
 export default function EnquirePage() {
   return (
     <>
+      <BreadcrumbJsonLd name="Enquire" path="/enquire" />
       <section className="enquiry-hero">
         <div className="shell enquiry-hero-grid">
           <div>
@@ -42,20 +45,13 @@ export default function EnquirePage() {
           <div className="contact-panel">
             <p className="eyebrow">Contact</p>
             <h2>Beach Road Pizza</h2>
-            <a className="contact-phone" href={BUSINESS.phoneHref}>
-              {BUSINESS.phoneDisplay}
-            </a>
-            <address>{BUSINESS.address}</address>
+            <VenuePhoneLink className="contact-phone" prefix="" />
+            <address><VenueAddress /></address>
             <a href={BUSINESS.mapsUrl} target="_blank" rel="noreferrer">
               Get directions
             </a>
             <div className="contact-hours">
-              {HOURS.map((row) => (
-                <p key={row.days}>
-                  <span>{row.days}</span>
-                  {row.hours}
-                </p>
-              ))}
+              <HoursRows variant="contact" />
             </div>
           </div>
           <EnquiryForm />
@@ -79,7 +75,7 @@ export default function EnquirePage() {
             </details>
             <details>
               <summary>Can I order pickup or delivery?</summary>
-              <p>Both are available. Pickup is from 29B Beach Road, Christies Beach. Delivery starts from $8, with the final fee and delivery area confirmed before payment.</p>
+              <p>Order pickup online and pay by card or in store when you collect from 29B Beach Road, Christies Beach. For delivery, order through Uber Eats or DoorDash.</p>
             </details>
             <details>
               <summary>Can I organise a large group order?</summary>
