@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { BUSINESS } from "../lib/site-data";
 import { StoreStatus } from "./StoreStatus";
-import { CartCount } from "./CartProvider";
+import { CartButton } from "./CartProvider";
 import { SiteNotice } from "./SiteNotice";
 import { Chrome } from "./Chrome";
 import { BookingsNavLink, HoursRows, TodayNote, VenuePhoneLink } from "./VenueBits";
@@ -47,11 +47,13 @@ export function Shell({ children }: { children: ReactNode }) {
             ))}
             <BookingsNavLink />
           </nav>
-          <a className="button button-small header-order-button" href={BUSINESS.orderUrl}>
-            <span className="order-label-full">Order online</span>
-            <span className="order-label-short">Order</span>
-            <CartCount />
-          </a>
+          <div className="header-actions">
+            <a className="button button-small header-order-button" href={BUSINESS.orderUrl}>
+              <span className="order-label-full">Order online</span>
+              <span className="order-label-short">Order</span>
+            </a>
+            <CartButton />
+          </div>
           <details className="mobile-menu">
             <summary aria-label="Open website menu">Menu</summary>
             <nav aria-label="Mobile navigation">
@@ -61,9 +63,7 @@ export function Shell({ children }: { children: ReactNode }) {
                 </a>
               ))}
               <BookingsNavLink />
-              <a href={BUSINESS.orderUrl}>
-                Order online <CartCount />
-              </a>
+              <a href={BUSINESS.orderUrl}>Order online</a>
             </nav>
           </details>
         </div>

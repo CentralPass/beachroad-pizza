@@ -76,7 +76,7 @@ const favourites = [
   {
     title: "Loaded Wedges",
     detail: "Bacon, cheese and sour cream",
-    image: "/images/food/Beach Road Pizza_Bacon & Wedges.jpg",
+    image: "/images/food/Beach%20Road%20Pizza_Bacon%20%26%20Wedges.jpg",
   },
 ];
 
@@ -95,7 +95,7 @@ const movingFavourites = [
   },
   {
     title: "Ham & Cheese",
-    image: "/images/food/Beach Road Pizza_Ham & Cheese.jpg",
+    image: "/images/food/Beach%20Road%20Pizza_Ham%20%26%20Cheese.jpg",
   },
   {
     title: "Chicken",

@@ -273,9 +273,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function CartCount() {
-  const { count } = useCart();
-  return count ? <span className="cart-count" aria-label={`${count} items in cart`}>{count}</span> : null;
+export function CartButton() {
+  const { count, isOpen, openCart } = useCart();
+  return (
+    <button
+      className="header-cart-button"
+      type="button"
+      onClick={openCart}
+      aria-label={count ? `Open cart, ${count} ${count === 1 ? "item" : "items"}` : "Open cart"}
+      aria-controls="site-cart"
+      aria-expanded={isOpen}
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M3 4h2l2 11h11l2-8H6" />
+        <circle cx="9" cy="19" r="1" />
+        <circle cx="18" cy="19" r="1" />
+      </svg>
+      <span className="header-cart-label">Cart</span>
+      {count ? <span className="cart-count" aria-hidden="true">{count}</span> : null}
+    </button>
+  );
 }
 
 export function QuantityControl({ line }: { line: CartLine }) {
@@ -432,6 +449,7 @@ function CartDrawer() {
     <>
       <button className={`cart-scrim ${isOpen ? "is-open" : ""}`} type="button" onClick={closeCart} aria-label="Close cart" tabIndex={-1} />
       <aside
+        id="site-cart"
         ref={drawerRef}
         className={`cart-drawer ${isOpen ? "is-open" : ""}`}
         aria-hidden={!isOpen}

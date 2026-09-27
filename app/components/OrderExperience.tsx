@@ -31,12 +31,12 @@ export function OrderExperience({ initialMenu }: { initialMenu: MenuResponse | n
   return (
     <>
       <OrderNotices />
-      <OrderBasket />
       <section className="order-menu-section" aria-labelledby="order-menu-heading">
         <p className="eyebrow">Build your order</p>
         <h2 id="order-menu-heading">Add something delicious.</h2>
         <OrderMenu live={live} onChoose={setChosen} />
       </section>
+      <OrderBasket />
       {chosen ? (
         <ItemSheet
           item={chosen.item}
@@ -116,8 +116,8 @@ function OrderBasket() {
         ) : (
           <div className="order-empty">
             <h3>Your cart is empty.</h3>
-            <p>Browse the menu below and tap an item to add it.</p>
-            <a className="button" href="#order-menu-heading">Start with the menu</a>
+            <p>Browse the menu above and tap an item to add it.</p>
+            <a className="button" href="#order-menu-heading">Back to the menu</a>
           </div>
         )}
         <p className="order-delivery-note">

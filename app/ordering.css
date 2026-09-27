@@ -950,6 +950,12 @@ button:disabled,
   gap: 14px;
 }
 
+.booking-layout > *,
+.booking-form,
+.booking-form fieldset {
+  min-width: 0;
+}
+
 .booking-form fieldset {
   margin: 0 0 18px;
   padding: 0;
@@ -971,6 +977,8 @@ button:disabled,
 
 .chip-row-scroll {
   flex-wrap: nowrap;
+  width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   padding-bottom: 6px;
 }

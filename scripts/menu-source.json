@@ -32,7 +32,7 @@
       "description": "Cheese and ham on a tomato base.",
       "price": "From $14.50",
       "sizes": "Small $14.50 | Large $18.50 | Family $26.50 | Party $31.50",
-      "image": "/images/food/Beach Road Pizza_Ham & Cheese.jpg"
+      "image": "/images/food/Beach%20Road%20Pizza_Ham%20%26%20Cheese.jpg"
     },
     {
       "name": "Ham and Pineapple",
@@ -396,7 +396,7 @@
       "category": "Sides",
       "description": "Wedges with bacon, cheese, sweet chilli and sour cream.",
       "price": "$15",
-      "image": "/images/food/Beach Road Pizza_Bacon & Wedges.jpg"
+      "image": "/images/food/Beach%20Road%20Pizza_Bacon%20%26%20Wedges.jpg"
     },
     {
       "name": "Chicken Nuggets",

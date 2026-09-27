@@ -2380,6 +2380,11 @@ h3 {
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
+}
+
+.footer-brand > div {
+  min-width: 0;
 }
 
 .footer-logo {
@@ -2591,6 +2596,36 @@ h3 {
   position: relative;
   gap: 7px;
   white-space: nowrap;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.header-cart-button {
+  display: inline-flex;
+  min-width: 46px;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 2px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.header-cart-button svg {
+  width: 21px;
+  height: 21px;
+  flex: 0 0 auto;
 }
 
 .order-label-short {
@@ -3147,9 +3182,7 @@ h3 {
 }
 
 .order-menu-section {
-  margin-top: 48px;
-  padding-top: 30px;
-  border-top: 1px solid var(--hairline);
+  margin-bottom: 48px;
 }
 
 .order-menu-section > h2 {
@@ -3336,9 +3369,35 @@ h3 {
 
   .button-small {
     min-height: 42px;
-    margin-left: auto;
     padding-inline: 12px;
     font-size: 0.76rem;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .header-cart-button {
+    position: relative;
+    width: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    padding: 7px;
+  }
+
+  .header-cart-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .header-cart-button .cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
   }
 
   .order-label-full {
@@ -3467,8 +3526,7 @@ h3 {
   }
 
   .order-menu-section {
-    margin-top: 34px;
-    padding-top: 22px;
+    margin-bottom: 34px;
   }
 
   .faq-section,
@@ -3478,6 +3536,21 @@ h3 {
 }
 
 @media (max-width: 370px) {
+  .service-bar-inner {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px 12px;
+    padding-block: 5px;
+  }
+
+  .service-bar-inner a {
+    white-space: nowrap;
+  }
+
+  .footer-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .header-logo {
     width: 66px;
   }
