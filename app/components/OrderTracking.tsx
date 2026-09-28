@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ApiError, api } from "../lib/api";
-import { formatMoney, formatVenueDateTime } from "../lib/format";
+import { formatMoney, formatVenueDateTime, formatVenueTime } from "../lib/format";
 import type { TrackedOrder } from "../lib/types";
 import { orderReference } from "../lib/venue";
 import { useCart } from "./CartProvider";
@@ -11,8 +11,12 @@ import { useVenue } from "./providers/VenueProvider";
 
 const TERMINAL = new Set(["rejected", "cancelled", "completed", "handed_over"]);
 const STAGES = ["Received", "Accepted", "Cooking", "Ready"];
+const DELIVERY_STAGES = ["Received", "Being made", "On the way", "Delivered"];
+const DELIVERY_DONE = new Set(["delivered", "failed", "cancelled"]);
 
-const COPY: Record<string, { eyebrow: string; heading: string; body: string }> = {
+type Copy = { eyebrow: string; heading: string; body: string };
+
+const COPY: Record<string, Copy> = {
   awaiting_payment: { eyebrow: "Finalising payment", heading: "Confirming your payment.", body: "This normally takes a moment. The page updates by itself." },
   pending: { eyebrow: "Order received", heading: "Waiting for the kitchen.", body: "Your order has reached the shop and is waiting for the team to accept it." },
   accepted: { eyebrow: "In the oven", heading: "We're making your order.", body: "Everything is underway. This page updates when it's ready to collect." },
@@ -23,11 +27,41 @@ const COPY: Record<string, { eyebrow: string; heading: string; body: string }> =
   cancelled: { eyebrow: "Order cancelled", heading: "This order was cancelled.", body: "Please call us if you have questions about the cancellation or a refund." },
 };
 
+// Where a delivery is up to, in the customer's words.
+function deliveryCopy(order: TrackedOrder): Copy {
+  const d = order.delivery;
+  if (["rejected", "cancelled", "awaiting_payment", "pending"].includes(order.status) || !d) return COPY[order.status] || COPY.pending;
+  const due = d.promised_at ? formatVenueTime(d.promised_at) : null;
+  const driver = d.driver_first_name || "Your driver";
+  if (d.status === "delivered") {
+    return { eyebrow: "Delivered", heading: "Delivered. Enjoy!", body: `${driver} dropped it off${d.delivered_at ? ` at ${formatVenueTime(d.delivered_at)}` : ""}. Thanks for ordering.` };
+  }
+  if (d.status === "failed") {
+    return { eyebrow: "Delivery update", heading: "We couldn't deliver your order.", body: "Sorry about that. Please call us and we'll sort it out." };
+  }
+  if (d.status === "cancelled") return COPY.cancelled;
+  if (d.status === "on_the_way") {
+    return { eyebrow: "On the way", heading: `${driver} is on the way.`, body: `It left${d.left_at ? ` at ${formatVenueTime(d.left_at)}` : ""}${due ? ` and should arrive around ${due}` : ""}.` };
+  }
+  if (["ready", "completed"].includes(order.status)) {
+    return { eyebrow: "Ready", heading: "Ready and waiting for the driver.", body: due ? `It should reach you around ${due}.` : "It's about to head your way." };
+  }
+  return { eyebrow: "In the oven", heading: "We're making your order.", body: due ? `It should reach you around ${due}. This page updates when it leaves.` : "This page updates when it leaves." };
+}
+
 function stage(status: string) {
   if (status === "awaiting_payment") return 0;
   if (status === "pending") return 1;
   if (status === "accepted") return 2;
   if (["ready", "completed", "handed_over"].includes(status)) return 4;
+  return 0;
+}
+
+function deliveryStage(order: TrackedOrder) {
+  const d = order.delivery;
+  if (d?.status === "delivered") return 4;
+  if (d?.status === "on_the_way") return 2;
+  if (["accepted", "ready", "completed"].includes(order.status)) return 1;
   return 0;
 }
 
@@ -91,10 +125,19 @@ export function OrderTracking({ token }: { token: string }) {
     return () => window.clearTimeout(timer);
   }, [load]);
 
-  const active = Boolean(order && !TERMINAL.has(order.status)) && !isExample;
+  const isDelivery = order?.order_type === "delivery";
+  // A delivery isn't finished when it leaves the kitchen, only at the door.
+  const finished = order
+    ? isDelivery
+      ? ["rejected", "cancelled"].includes(order.status) || DELIVERY_DONE.has(order.delivery?.status || "")
+      : TERMINAL.has(order.status)
+    : false;
+  const active = Boolean(order && !finished) && !isExample;
+  // On the road the driver's position moves, so check more often.
+  const onTheWay = isDelivery && order?.delivery?.status === "on_the_way";
   useEffect(() => {
     if (!active) return;
-    const timer = window.setInterval(() => void load(true), 15_000);
+    const timer = window.setInterval(() => void load(true), onTheWay ? 10_000 : 15_000);
     const onVisible = () => {
       if (document.visibilityState === "visible") void load(true);
     };
@@ -103,12 +146,17 @@ export function OrderTracking({ token }: { token: string }) {
       window.clearInterval(timer);
       document.removeEventListener("visibilitychange", onVisible);
     };
-  }, [active, load]);
+  }, [active, onTheWay, load]);
 
-  const copy = COPY[order?.status || "pending"] || COPY.pending;
-  const progress = useMemo(() => stage(order?.status || ""), [order?.status]);
-  const interrupted = order ? ["rejected", "cancelled"].includes(order.status) : false;
+  const copy = order ? (isDelivery ? deliveryCopy(order) : COPY[order.status] || COPY.pending) : COPY.pending;
+  const stages = isDelivery ? DELIVERY_STAGES : STAGES;
+  const progress = useMemo(() => (order ? (isDelivery ? deliveryStage(order) : stage(order.status)) : 0), [order, isDelivery]);
+  const interrupted = order
+    ? ["rejected", "cancelled"].includes(order.status) || (isDelivery && ["failed", "cancelled"].includes(order.delivery?.status || ""))
+    : false;
   const itemCount = order ? order.items.reduce((sum, item) => sum + Number(item.quantity), 0) : 0;
+  const due = order?.payment.amount_due_at_pickup || 0;
+  const delivery = order?.delivery;
 
   return (
     <>
@@ -140,12 +188,16 @@ export function OrderTracking({ token }: { token: string }) {
 
             <div className="tracking-header">
               <div><span>Order number</span><strong>{orderReference(order.order_number)}</strong></div>
-              <div><span>Pickup</span><strong>{order.pickup_time ? formatVenueDateTime(order.pickup_time) : "As soon as it's ready"}</strong></div>
+              {isDelivery && delivery ? (
+                <div><span>Delivery</span><strong>{delivery.promised_at ? `${delivery.scheduled ? "" : "Around "}${formatVenueTime(delivery.promised_at)}` : "As soon as possible"}</strong></div>
+              ) : (
+                <div><span>Pickup</span><strong>{order.pickup_time ? formatVenueDateTime(order.pickup_time) : "As soon as it's ready"}</strong></div>
+              )}
             </div>
 
             {!interrupted ? (
               <ol className="tracking-stages" aria-label={`Order status: ${copy.eyebrow}`}>
-                {STAGES.map((label, index) => {
+                {stages.map((label, index) => {
                   const state = index < progress ? "is-done" : index === progress ? "is-current" : "";
                   return (
                     <li key={label} className={state}>
@@ -165,17 +217,42 @@ export function OrderTracking({ token }: { token: string }) {
             <div className="tracking-grid">
               <section className="tracking-card">
                 <p className="eyebrow">Payment</p>
-                <h2>{order.payment.amount_due_at_pickup > 0 ? `${formatMoney(order.payment.amount_due_at_pickup)} due at pickup` : "Nothing due at pickup"}</h2>
+                <h2>
+                  {due > 0
+                    ? `${formatMoney(due)} due ${isDelivery ? "on delivery" : "at pickup"}`
+                    : isDelivery ? "Nothing due on delivery" : "Nothing due at pickup"}
+                </h2>
                 <p>{order.payment.message}</p>
                 {order.payment.adjustment_reason ? <p className="tracking-adjustment">Reason: {order.payment.adjustment_reason}</p> : null}
-                <span className="tracking-badge">{order.payment.method === "cash" ? "Pay in store" : "Paid by card"}</span>
+                <span className="tracking-badge">
+                  {order.payment.method === "cash" ? (isDelivery ? "Pay the driver" : "Pay in store") : "Paid by card"}
+                </span>
               </section>
-              <section className="tracking-card">
-                <p className="eyebrow">Collect from</p>
-                <h2>{venue.name}</h2>
-                <p>{venue.address}</p>
-                <a className="text-link" href={venue.mapsUrl} target="_blank" rel="noreferrer">Get directions</a>
-              </section>
+              {isDelivery && delivery ? (
+                <section className="tracking-card">
+                  <p className="eyebrow">Delivering to</p>
+                  <h2>{delivery.address}</h2>
+                  <p>{delivery.suburb}{delivery.leave_at_door ? " · leave at the door" : ""}</p>
+                  {delivery.driver_location ? (
+                    <p className="tracking-driver">
+                      <span className="live-dot is-live" aria-hidden="true" />
+                      {delivery.driver_first_name || "Your driver"} was here at {formatVenueTime(delivery.driver_location.at)}.{" "}
+                      <a className="text-link" target="_blank" rel="noreferrer"
+                        href={`https://www.google.com/maps/search/?api=1&query=${delivery.driver_location.lat},${delivery.driver_location.lng}`}>
+                        See on a map
+                      </a>
+                    </p>
+                  ) : null}
+                  {order.tip_amount ? <p>Thanks for the {formatMoney(order.tip_amount)} tip. It all goes to the driver.</p> : null}
+                </section>
+              ) : (
+                <section className="tracking-card">
+                  <p className="eyebrow">Collect from</p>
+                  <h2>{venue.name}</h2>
+                  <p>{venue.address}</p>
+                  <a className="text-link" href={venue.mapsUrl} target="_blank" rel="noreferrer">Get directions</a>
+                </section>
+              )}
             </div>
 
             <section className="tracking-card tracking-items">

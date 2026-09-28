@@ -4,9 +4,10 @@ import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-
 import { loadStripe, type Stripe } from "@stripe/stripe-js";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { ApiError, api } from "../../lib/api";
+import { loadSavedAddress, saveAddress, useDeliveryConfig, zoneFor } from "../../lib/delivery";
 import { formatMoney, formatVenueTime } from "../../lib/format";
 import { pickupSlots } from "../../lib/hours";
-import type { CreateOrderResponse, Quote } from "../../lib/types";
+import type { CreateOrderResponse, DeliveryConfig, Quote } from "../../lib/types";
 import { LinePrice, ModifierList, QuoteRows, useCart } from "../CartProvider";
 import { useStoreStatus } from "../providers/StoreStatusProvider";
 import { useVenue } from "../providers/VenueProvider";
@@ -32,14 +33,37 @@ type Details = {
   email: string;
   timing: "asap" | "scheduled";
   pickupTime: string;
+  deliveryTime: string;
   notes: string;
   paymentMethod: "card" | "cash";
   marketingOptIn: boolean;
+  addressLine1: string;
+  addressLine2: string;
+  instructions: string;
+  leaveAtDoor: boolean;
 };
 
-type PendingCard = { order: CreateOrderResponse; details: Details; quote: Quote | null };
+const BLANK: Details = {
+  name: "",
+  phone: "",
+  email: "",
+  timing: "asap",
+  pickupTime: "",
+  deliveryTime: "",
+  notes: "",
+  paymentMethod: "card",
+  marketingOptIn: false,
+  addressLine1: "",
+  addressLine2: "",
+  instructions: "",
+  leaveAtDoor: false,
+};
+
+type Delivered = { suburb: string; postcode: string } | null;
+type PendingCard = { order: CreateOrderResponse; details: Details; quote: Quote | null; delivery: Delivered };
 
 // Backend refusals that deserve a specific next step rather than "failed".
+// Delivery refusals already come with a sentence written for the customer.
 const RECOVERY: Record<string, string> = {
   STORE_CLOSED: "We've just closed for online orders. Please check our hours and order when we're open.",
   ORDERS_PAUSED: "The kitchen has paused online orders for a moment. Please try again shortly.",
@@ -49,14 +73,20 @@ const RECOVERY: Record<string, string> = {
   PICKUP_NOT_TODAY: "Pickup times are for today only. Please choose another time.",
   PAYMENT_METHOD_UNAVAILABLE: "That payment method was just switched off. Please choose another.",
 };
+// Refusals that mean the delivery times or state on screen are out of date.
+const STALE_DELIVERY = ["DELIVERY_TIME_UNAVAILABLE", "DELIVERY_BUSY", "DELIVERY_CLOSED", "DELIVERY_PAUSED", "DELIVERY_NOT_STARTED", "NOT_OFFERED"];
 
-function buildReceipt(order: CreateOrderResponse, details: Details, snapshot: { lines: ReturnType<typeof useCart>["lines"]; quote: Quote | null; subtotal: number; discountCode: string | null }): ReceiptSnapshot {
+const addressText = (details: Details, place: Delivered) =>
+  [[details.addressLine2.trim(), details.addressLine1.trim()].filter(Boolean).join(", "), place ? `${place.suburb} ${place.postcode}` : ""]
+    .filter(Boolean).join(", ");
+
+function buildReceipt(order: CreateOrderResponse, details: Details, delivery: Delivered, snapshot: { lines: ReturnType<typeof useCart>["lines"]; quote: Quote | null; subtotal: number; discountCode: string | null }): ReceiptSnapshot {
   const { quote } = snapshot;
   const total = quote ? quote.total : snapshot.subtotal;
   return {
     orderId: order.orderId,
     placedAt: new Date().toISOString(),
-    pickupTime: details.timing === "scheduled" ? details.pickupTime : null,
+    pickupTime: !delivery && details.timing === "scheduled" ? details.pickupTime : null,
     paymentMethod: details.paymentMethod,
     trackingUrl: order.tracking_url,
     name: details.name.trim(),
@@ -71,6 +101,13 @@ function buildReceipt(order: CreateOrderResponse, details: Details, snapshot: { 
     total,
     // Prefer the server's per-item GST; the /11 fallback assumes every item is taxed at 10%.
     gst: order.tax_summary?.gst_total ?? quote?.tax_breakdown?.gst_total ?? total / 11,
+    delivery: delivery && order.delivery ? {
+      address: addressText(details, delivery),
+      promisedAt: order.delivery.promised_at,
+      scheduled: order.delivery.scheduled,
+      fee: order.delivery.fee,
+      tip: order.delivery.tip,
+    } : null,
   };
 }
 
@@ -128,12 +165,12 @@ export function CheckoutFlow() {
           {step === "details" ? (
             <DetailsStep
               initial={savedDetails}
-              onCash={(order, details) => {
-                finish(buildReceipt(order, details, cart));
+              onCash={(order, details, delivery) => {
+                finish(buildReceipt(order, details, delivery, cart));
               }}
-              onCard={(order, details) => {
+              onCard={(order, details, delivery) => {
                 setSavedDetails(details);
-                setPending({ order, details, quote: cart.quote });
+                setPending({ order, details, quote: cart.quote, delivery });
                 setStep("payment");
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
@@ -145,7 +182,7 @@ export function CheckoutFlow() {
                 setPending(null);
                 setStep("details");
               }}
-              onPaid={() => finish(buildReceipt(pending.order, pending.details, cart))}
+              onPaid={() => finish(buildReceipt(pending.order, pending.details, pending.delivery, cart))}
             />
           ) : null}
         </div>
@@ -200,37 +237,73 @@ function OrderSummary() {
   );
 }
 
+// "From $5 · free over $60", for the delivery card before a suburb is chosen.
+function deliverySummary(config: Extract<DeliveryConfig, { offered: true }>) {
+  const fees = config.zones.map((zone) => zone.fee);
+  if (!fees.length) return "To selected suburbs";
+  const lowest = Math.min(...fees);
+  const from = lowest === 0 ? "Free to nearby suburbs" : fees.every((fee) => fee === lowest) ? `${formatMoney(lowest)} delivery` : `From ${formatMoney(lowest)}`;
+  return config.free_over ? `${from} · free over ${formatMoney(config.free_over)}` : from;
+}
+
+const TIPS = [0, 2, 4, 6];
+
 function DetailsStep({ initial, onCash, onCard }: {
   initial: Details | null;
-  onCash: (order: CreateOrderResponse, details: Details) => void;
-  onCard: (order: CreateOrderResponse, details: Details) => void;
+  onCash: (order: CreateOrderResponse, details: Details, delivery: Delivered) => void;
+  onCard: (order: CreateOrderResponse, details: Details, delivery: Delivered) => void;
 }) {
   const venue = useVenue();
   const cart = useCart();
   const status = useStoreStatus();
+  const { config, refresh: refreshDelivery } = useDeliveryConfig();
+  const offered = config?.offered ? config : null;
+  const delivery = cart.fulfilment === "delivery" && Boolean(offered);
+  const place = delivery ? cart.deliveryPlace : null;
+  const zone = place ? zoneFor(config, place.suburb, place.postcode) : null;
+  const quoted = cart.quote?.delivery;
   const cardAvailable = venue.paymentMethods.card && Boolean(STRIPE_KEY);
-  const cashAvailable = venue.paymentMethods.cash;
-  const [details, setDetails] = useState<Details>(() => initial || {
-    name: "",
-    phone: "",
-    email: "",
-    timing: "asap",
-    pickupTime: "",
-    notes: "",
-    paymentMethod: "card",
-    marketingOptIn: false,
-  });
-  const [errors, setErrors] = useState<Partial<Record<keyof Details, string>>>({});
+  const cashAvailable = delivery ? Boolean(offered?.cash_on_delivery) : venue.paymentMethods.cash;
+  const [details, setDetails] = useState<Details>(() => initial || BLANK);
+  const [errors, setErrors] = useState<Partial<Record<keyof Details | "place", string>>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [welcome, setWelcome] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [now, setNow] = useState(() => new Date());
+  const [otherTip, setOtherTip] = useState("");
   const submittingRef = useRef(false);
+  const { setDeliveryPlace, setFulfilment, setTip, tip } = cart;
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 30_000);
     return () => window.clearInterval(timer);
   }, []);
+
+  // A returning customer's address, remembered on this device only.
+  useEffect(() => {
+    if (initial) return;
+    const timer = window.setTimeout(() => {
+      const saved = loadSavedAddress();
+      if (!saved) return;
+      setDetails((current) => ({
+        ...current,
+        addressLine1: current.addressLine1 || saved.address_line1,
+        addressLine2: current.addressLine2 || saved.address_line2,
+        instructions: current.instructions || saved.instructions,
+        leaveAtDoor: current.leaveAtDoor || saved.leave_at_door,
+      }));
+      setDeliveryPlace(saved.suburb ? { suburb: saved.suburb, postcode: saved.postcode } : null);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [initial, setDeliveryPlace]);
+
+  // A venue that stops offering delivery drops back to pickup.
+  useEffect(() => {
+    if (config && !config.offered && cart.fulfilment === "delivery") {
+      const timer = window.setTimeout(() => setFulfilment("pickup"), 0);
+      return () => window.clearTimeout(timer);
+    }
+  }, [config, cart.fulfilment, setFulfilment]);
 
   // Fall back to whichever payment method is actually on offer.
   const paymentMethod = details.paymentMethod === "card" && !cardAvailable && cashAvailable
@@ -239,8 +312,20 @@ function DetailsStep({ initial, onCash, onCard }: {
       ? "card"
       : details.paymentMethod;
 
+  // A tip goes on the card payment, so it's offered only when paying by card.
+  const tipsOn = delivery && Boolean(offered?.tips_enabled) && paymentMethod === "card";
+  useEffect(() => {
+    if (!tipsOn && tip) {
+      const timer = window.setTimeout(() => setTip(0), 0);
+      return () => window.clearTimeout(timer);
+    }
+  }, [tipsOn, tip, setTip]);
+
   const slots = useMemo(() => pickupSlots(status.today, status.pickup, now), [status.today, status.pickup, now]);
   const pickupStillValid = details.pickupTime && slots.some((slot) => slot.toISOString() === details.pickupTime);
+  const deliverySlots = zone?.slots || [];
+  const deliveryTimeValid = details.deliveryTime && deliverySlots.includes(details.deliveryTime);
+  const asapOk = !zone || zone.asap.available;
 
   function update<K extends keyof Details>(key: K, value: Details[K]) {
     setDetails((current) => ({ ...current, [key]: value }));
@@ -266,13 +351,19 @@ function DetailsStep({ initial, onCash, onCard }: {
   }
 
   function validate() {
-    const next: Partial<Record<keyof Details, string>> = {};
+    const next: Partial<Record<keyof Details | "place", string>> = {};
     if (!details.name.trim()) next.name = "Please enter your name.";
     const phone = cleanPhone(details.phone);
-    if (!phone) next.phone = "We need a phone number in case there's a problem with your order.";
+    if (!phone) next.phone = delivery ? "We need a phone number so the driver can reach you." : "We need a phone number in case there's a problem with your order.";
     else if (!AU_PHONE.test(phone)) next.phone = "Enter an Australian number, like 0412 345 678 or 08 8186 5991.";
     if (details.email.trim() && !EMAIL.test(details.email.trim())) next.email = "That email address doesn't look right.";
-    if (details.timing === "scheduled" && !pickupStillValid) next.pickupTime = "Choose a pickup time.";
+    if (delivery) {
+      if (!details.addressLine1.trim()) next.addressLine1 = "Enter your street address.";
+      if (!place) next.place = "Choose your suburb.";
+      if (details.timing === "scheduled" && !deliveryTimeValid) next.deliveryTime = "Choose a delivery time.";
+    } else if (details.timing === "scheduled" && !pickupStillValid) {
+      next.pickupTime = "Choose a pickup time.";
+    }
     return next;
   }
 
@@ -285,10 +376,19 @@ function DetailsStep({ initial, onCash, onCard }: {
       document.querySelector<HTMLElement>(".checkout-form [aria-invalid='true']")?.focus();
       return;
     }
+    if (deliveryProblem) {
+      setFormError(deliveryProblem);
+      return;
+    }
+    if (delivery && details.timing === "asap" && zone && !zone.asap.available) {
+      setFormError(zone.asap.message || "Delivery isn't available as soon as possible right now. Choose a time.");
+      return;
+    }
     submittingRef.current = true;
     setSubmitting(true);
     setFormError(null);
     const finalDetails = { ...details, paymentMethod, phone: cleanPhone(details.phone) };
+    const deliveredTo = delivery && place ? { ...place } : null;
     try {
       const order = await api.post<CreateOrderResponse>("/api/orders", {
         customer: {
@@ -298,19 +398,44 @@ function DetailsStep({ initial, onCash, onCard }: {
           marketing_opt_in: finalDetails.marketingOptIn,
         },
         payment_method: paymentMethod,
-        pickup_time: finalDetails.timing === "scheduled" ? finalDetails.pickupTime : undefined,
         notes: finalDetails.notes.trim() || undefined,
         items: cart.orderItems(),
         discount_code: cart.discountCode || undefined,
+        ...(deliveredTo
+          ? {
+            order_type: "delivery",
+            delivery: {
+              address_line1: finalDetails.addressLine1.trim(),
+              address_line2: finalDetails.addressLine2.trim() || undefined,
+              suburb: deliveredTo.suburb,
+              postcode: deliveredTo.postcode,
+              instructions: finalDetails.instructions.trim() || undefined,
+              leave_at_door: finalDetails.leaveAtDoor,
+            },
+            delivery_time: finalDetails.timing === "scheduled" ? finalDetails.deliveryTime : undefined,
+            tip: tipsOn && tip ? tip : undefined,
+          }
+          : { pickup_time: finalDetails.timing === "scheduled" ? finalDetails.pickupTime : undefined }),
       });
-      if (paymentMethod === "cash") onCash(order, finalDetails);
-      else if (order.client_secret) onCard(order, finalDetails);
-      else setFormError("Card payment couldn't be started. Please try again or choose to pay in store.");
+      if (deliveredTo) {
+        saveAddress({
+          address_line1: finalDetails.addressLine1.trim(),
+          address_line2: finalDetails.addressLine2.trim(),
+          suburb: deliveredTo.suburb,
+          postcode: deliveredTo.postcode,
+          instructions: finalDetails.instructions.trim(),
+          leave_at_door: finalDetails.leaveAtDoor,
+        });
+      }
+      if (paymentMethod === "cash") onCash(order, finalDetails, deliveredTo);
+      else if (order.client_secret) onCard(order, finalDetails, deliveredTo);
+      else setFormError(`Card payment couldn't be started. Please try again${cashAvailable ? (delivery ? " or choose to pay the driver" : " or choose to pay in store") : ""}.`);
     } catch (caught) {
       const error = caught as ApiError;
       const known = error.code ? RECOVERY[error.code] : null;
       setFormError(known ? `${known}${error.code === "OUTSIDE_SERVICE_WINDOW" ? ` (${error.message})` : ""}` : error.message);
       if (error.code && ["STORE_CLOSED", "ORDERS_PAUSED", "PICKUP_TOO_SOON", "PICKUP_OUTSIDE_HOURS"].includes(error.code)) status.refresh();
+      if (error.code && STALE_DELIVERY.includes(error.code)) void refreshDelivery();
       if (error.code === "PAYMENT_METHOD_UNAVAILABLE") window.location.reload();
     } finally {
       submittingRef.current = false;
@@ -320,15 +445,40 @@ function DetailsStep({ initial, onCash, onCard }: {
 
   const closed = status.ordersPaused || status.acceptingOrders === false;
   const noPayment = !cardAvailable && !cashAvailable;
+  // A real reason delivery can't go ahead (below the minimum), shown under the
+  // address. A missing address isn't one: the button stays live so pressing it
+  // names what's missing.
+  const deliveryProblem = delivery && place && cart.quoteStatus === "ready" && quoted && !quoted.available && quoted.code !== "NEED_ADDRESS"
+    ? quoted.message || "Delivery isn't available for this order."
+    : null;
+  const deliveryPricing = delivery && Boolean(place) && cart.quoteStatus === "loading";
+  const deliveryBlocked = delivery && (Boolean(deliveryProblem) || deliveryPricing);
 
   return (
     <form className="order-details checkout-form" onSubmit={submit} noValidate>
       <p className="eyebrow">Step 1</p>
-      <h2>Your pickup details.</h2>
+      <h2>{offered ? "Your order details." : "Your pickup details."}</h2>
 
       {status.ordersPaused ? <p className="order-notice order-notice-alert" role="alert"><strong>Online orders are paused.</strong> Please try again in a few minutes.</p> : null}
       {!status.ordersPaused && status.acceptingOrders === false ? <p className="order-notice order-notice-alert" role="alert"><strong>We&apos;re closed right now.</strong> You can place your order when the shop opens.</p> : null}
       {cart.quoteProblem ? <p className="order-notice order-notice-alert" role="alert">{cart.quoteProblem} <a href="/order">Edit your order</a></p> : null}
+
+      {offered ? (
+        <fieldset className="choice-cards fulfilment-choice">
+          <legend>How would you like it?</legend>
+          <label className={!delivery ? "is-selected" : ""}>
+            <input type="radio" name="fulfilment" checked={!delivery} onChange={() => { setFulfilment("pickup"); setFormError(null); }} />
+            <strong>Pickup</strong>
+            <small>Collect from {venue.name}</small>
+          </label>
+          <label className={delivery ? "is-selected" : ""}>
+            <input type="radio" name="fulfilment" checked={delivery} onChange={() => { setFulfilment("delivery"); setFormError(null); }} />
+            <strong>Delivery</strong>
+            <small>{deliverySummary(offered)}</small>
+          </label>
+        </fieldset>
+      ) : null}
+      {delivery && offered && !offered.open ? <p className="order-notice order-notice-alert" role="status">{offered.message}</p> : null}
 
       <div className="order-form-grid">
         <label>
@@ -351,7 +501,9 @@ function DetailsStep({ initial, onCash, onCard }: {
             aria-invalid={Boolean(errors.phone)}
             aria-describedby={errors.phone ? "err-phone" : "help-phone"}
           />
-          {errors.phone ? <span className="field-error" id="err-phone">{errors.phone}</span> : <span className="field-help" id="help-phone">So we can reach you about this order.</span>}
+          {errors.phone
+            ? <span className="field-error" id="err-phone">{errors.phone}</span>
+            : <span className="field-help" id="help-phone">{delivery ? "So the driver can reach you." : "So we can reach you about this order."}</span>}
         </label>
         <label className="full-field">
           <span>Email <span className="field-optional">(optional)</span></span>
@@ -378,23 +530,104 @@ function DetailsStep({ initial, onCash, onCard }: {
       </div>
       {welcome ? <p className="field-success" role="status">{welcome}</p> : null}
 
+      {delivery && offered ? (
+        <fieldset className="delivery-address">
+          <legend>Where should we deliver?</legend>
+          <div className="order-form-grid">
+            <label className="full-field">
+              Street address
+              <input value={details.addressLine1} onChange={(event) => update("addressLine1", event.target.value)} autoComplete="address-line1"
+                placeholder="12 Beach Road" aria-invalid={Boolean(errors.addressLine1)} aria-describedby={errors.addressLine1 ? "err-address" : undefined} />
+              {errors.addressLine1 ? <span className="field-error" id="err-address">{errors.addressLine1}</span> : null}
+            </label>
+            <label>
+              <span>Unit or apartment <span className="field-optional">(optional)</span></span>
+              <input value={details.addressLine2} onChange={(event) => update("addressLine2", event.target.value)} autoComplete="address-line2" placeholder="Unit 3" />
+            </label>
+            <label>
+              Suburb
+              <select
+                value={place ? `${place.suburb}|${place.postcode}` : ""}
+                onChange={(event) => {
+                  const [suburb, postcode] = event.target.value.split("|");
+                  setDeliveryPlace(suburb ? { suburb, postcode } : null);
+                  setErrors((current) => ({ ...current, place: undefined, deliveryTime: undefined }));
+                  setDetails((current) => ({ ...current, deliveryTime: "" }));
+                  setFormError(null);
+                }}
+                aria-invalid={Boolean(errors.place)}
+                aria-describedby={errors.place ? "err-place" : "help-place"}
+              >
+                <option value="">Choose your suburb</option>
+                {offered.areas.map((area) => (
+                  <option key={`${area.suburb}|${area.postcode}`} value={`${area.suburb}|${area.postcode}`}>{area.suburb} {area.postcode}</option>
+                ))}
+              </select>
+              {errors.place
+                ? <span className="field-error" id="err-place">{errors.place}</span>
+                : <span className="field-help" id="help-place">Not listed? We don&apos;t deliver there yet, but pickup is always on.</span>}
+            </label>
+          </div>
+          <label className="order-notes">
+            <span>Delivery notes <span className="field-optional">(optional)</span></span>
+            <textarea value={details.instructions} onChange={(event) => update("instructions", event.target.value)} maxLength={300}
+              placeholder="Gate code, which door, anything that helps the driver find you." />
+          </label>
+          <label className="check-control">
+            <input type="checkbox" checked={details.leaveAtDoor} onChange={(event) => update("leaveAtDoor", event.target.checked)} />
+            <span>Leave it at the door if I don&apos;t answer</span>
+          </label>
+          {place && quoted ? (
+            quoted.available ? (
+              <p className="field-success delivery-fee-note" role="status">
+                {quoted.free ? `Free delivery to ${place.suburb}.` : `Delivery to ${place.suburb} is ${formatMoney(quoted.fee)}.`}
+                {!quoted.free && quoted.free_over ? ` Free when your food comes to ${formatMoney(quoted.free_over)}.` : ""}
+              </p>
+            ) : quoted.message ? <p className="order-notice order-notice-alert" role="status">{quoted.message}</p> : null
+          ) : null}
+        </fieldset>
+      ) : null}
+
       <fieldset className="timing-choice">
-        <legend>When would you like to pick it up?</legend>
-        <label><input type="radio" name="timing" checked={details.timing === "asap"} onChange={() => update("timing", "asap")} /> As soon as it&apos;s ready</label>
-        <label><input type="radio" name="timing" checked={details.timing === "scheduled"} onChange={() => update("timing", "scheduled")} disabled={!slots.length} /> Choose a time today</label>
+        <legend>{delivery ? "When would you like it delivered?" : "When would you like to pick it up?"}</legend>
+        <label>
+          <input type="radio" name="timing" checked={details.timing === "asap"} onChange={() => update("timing", "asap")} disabled={delivery && !asapOk} />{" "}
+          {delivery
+            ? zone?.asap.available ? `As soon as possible, about ${zone.asap.minutes} min` : "As soon as possible"
+            : <>As soon as it&apos;s ready</>}
+        </label>
+        <label>
+          <input type="radio" name="timing" checked={details.timing === "scheduled"} onChange={() => update("timing", "scheduled")}
+            disabled={delivery ? (Boolean(zone) && !deliverySlots.length) : !slots.length} /> Choose a time today
+        </label>
       </fieldset>
+      {delivery && zone && !zone.asap.available && zone.asap.message ? <p className="field-help">{zone.asap.message}</p> : null}
       {details.timing === "scheduled" ? (
         <div className="order-form-grid schedule-fields">
-          <label>
-            Pickup time
-            {slots.length ? (
-              <select value={pickupStillValid ? details.pickupTime : ""} onChange={(event) => update("pickupTime", event.target.value)} aria-invalid={Boolean(errors.pickupTime)}>
-                <option value="">Select a time</option>
-                {slots.map((slot) => <option key={slot.toISOString()} value={slot.toISOString()}>{formatVenueTime(slot)}</option>)}
-              </select>
-            ) : <span className="field-help">No more pickup times today.</span>}
-            {errors.pickupTime ? <span className="field-error">{errors.pickupTime}</span> : null}
-          </label>
+          {delivery ? (
+            <label>
+              Delivery time
+              {!place ? <span className="field-help">Choose your suburb first.</span>
+                : deliverySlots.length ? (
+                  <select value={deliveryTimeValid ? details.deliveryTime : ""} onChange={(event) => update("deliveryTime", event.target.value)} aria-invalid={Boolean(errors.deliveryTime)}>
+                    <option value="">Select a time</option>
+                    {deliverySlots.map((slot) => <option key={slot} value={slot}>{formatVenueTime(slot)}</option>)}
+                  </select>
+                ) : <span className="field-help">No more delivery times today.</span>}
+              {errors.deliveryTime ? <span className="field-error">{errors.deliveryTime}</span> : null}
+            </label>
+          ) : (
+            <label>
+              Pickup time
+              {slots.length ? (
+                <select value={pickupStillValid ? details.pickupTime : ""} onChange={(event) => update("pickupTime", event.target.value)} aria-invalid={Boolean(errors.pickupTime)}>
+                  <option value="">Select a time</option>
+                  {slots.map((slot) => <option key={slot.toISOString()} value={slot.toISOString()}>{formatVenueTime(slot)}</option>)}
+                </select>
+              ) : <span className="field-help">No more pickup times today.</span>}
+              {errors.pickupTime ? <span className="field-error">{errors.pickupTime}</span> : null}
+            </label>
+          )}
         </div>
       ) : null}
 
@@ -415,12 +648,36 @@ function DetailsStep({ initial, onCash, onCard }: {
         {cashAvailable ? (
           <label className={paymentMethod === "cash" ? "is-selected" : ""}>
             <input type="radio" name="payment" value="cash" checked={paymentMethod === "cash"} onChange={() => update("paymentMethod", "cash")} />
-            <strong>Pay in store</strong>
-            <small>Pay when you collect</small>
+            <strong>{delivery ? "Pay the driver" : "Pay in store"}</strong>
+            <small>{delivery ? "Cash when it arrives" : "Pay when you collect"}</small>
           </label>
         ) : null}
       </fieldset>
       {noPayment ? <p className="order-notice order-notice-alert" role="alert">Online payment is unavailable right now. Please call <a href={venue.telHref}>{venue.phone}</a> to order.</p> : null}
+
+      {tipsOn ? (
+        <fieldset className="tip-choice">
+          <legend>Add a tip for the driver? <span className="field-optional">(optional, all of it goes to them)</span></legend>
+          <div className="tip-options">
+            {TIPS.map((amount) => (
+              <button key={amount} type="button" className={tip === amount && !otherTip ? "is-selected" : ""} aria-pressed={tip === amount && !otherTip}
+                onClick={() => { setOtherTip(""); setTip(amount); }}>
+                {amount ? formatMoney(amount) : "No tip"}
+              </button>
+            ))}
+            <label className="tip-other">
+              <span className="sr-only">Another amount</span>
+              <input inputMode="decimal" placeholder="Other" value={otherTip}
+                onChange={(event) => {
+                  const value = event.target.value.replace(/[^\d.]/g, "");
+                  setOtherTip(value);
+                  const amount = Math.round(Number(value) * 100) / 100;
+                  setTip(Number.isFinite(amount) && amount > 0 ? Math.min(amount, 200) : 0);
+                }} />
+            </label>
+          </div>
+        </fieldset>
+      ) : null}
 
       <label className="check-control consent-control">
         <input type="checkbox" checked={details.marketingOptIn} onChange={(event) => update("marketingOptIn", event.target.checked)} />
@@ -429,14 +686,14 @@ function DetailsStep({ initial, onCash, onCard }: {
 
       {formError ? <p className="order-notice order-notice-alert" role="alert">{formError}</p> : null}
 
-      <button className="button checkout-submit" type="submit" disabled={submitting || closed || noPayment || Boolean(cart.quoteProblem)}>
+      <button className="button checkout-submit" type="submit" disabled={submitting || closed || noPayment || Boolean(cart.quoteProblem) || (delivery && (!offered?.open || deliveryBlocked))}>
         {submitting
           ? (paymentMethod === "cash" ? "Placing your order…" : "Preparing payment…")
           : paymentMethod === "cash"
-            ? `Place order · pay ${formatMoney(cart.total)} in store`
+            ? `Place order · pay ${formatMoney(cart.total)} ${delivery ? "to the driver" : "in store"}`
             : "Continue to payment"}
       </button>
-      <p className="checkout-note">By placing an order you agree to our <a href="/privacy">privacy policy</a>. Orders are for pickup only.</p>
+      <p className="checkout-note">By placing an order you agree to our <a href="/privacy">privacy policy</a>.{offered ? "" : " Orders are for pickup only."}</p>
     </form>
   );
 }
@@ -447,7 +704,7 @@ function PaymentStep({ pending, onBack, onPaid }: { pending: PendingCard; onBack
     return (
       <section className="order-details">
         <h2>Card payment is unavailable.</h2>
-        <p>Please go back and choose to pay in store, or call the shop.</p>
+        <p>Please go back and choose another way to pay, or call the shop.</p>
         <button className="button button-secondary" type="button" onClick={onBack}>Back</button>
       </section>
     );
@@ -511,11 +768,18 @@ function PaymentForm({ pending, onBack, onPaid }: { pending: PendingCard; onBack
     onPaid();
   }
 
+  const { details, delivery, order } = pending;
+  const when = delivery
+    ? order.delivery?.scheduled && order.delivery.promised_at ? ` around ${formatVenueTime(order.delivery.promised_at)}` : ", as soon as possible"
+    : details.timing === "scheduled" && details.pickupTime ? ` at ${formatVenueTime(details.pickupTime)}` : ", as soon as it's ready";
+
   return (
     <form className="order-details checkout-form" onSubmit={pay}>
       <p className="eyebrow">Step 2</p>
       <h2>Pay by card.</h2>
-      <p className="checkout-note">Pickup for {pending.details.name}{pending.details.timing === "scheduled" && pending.details.pickupTime ? ` at ${formatVenueTime(pending.details.pickupTime)}` : ", as soon as it's ready"}.</p>
+      <p className="checkout-note">
+        {delivery ? `Delivery to ${addressText(details, delivery)}${when}.` : `Pickup for ${details.name}${when}.`}
+      </p>
       <div className="stripe-field">
         <PaymentElement options={{ layout: "tabs" }} />
       </div>

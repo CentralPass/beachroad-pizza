@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { trackPurchase } from "../../lib/analytics";
-import { formatMoney, formatVenueDateTime, toNumber } from "../../lib/format";
+import { formatMoney, formatVenueDateTime, formatVenueTime, toNumber } from "../../lib/format";
 import { orderReference } from "../../lib/venue";
 import { ModifierList, lineUnitPrice, useCart } from "../CartProvider";
 import { useVenue } from "../providers/VenueProvider";
@@ -28,6 +28,7 @@ export function OrderReceipt({ receipt, onNewOrder }: { receipt: ReceiptSnapshot
 
   const reference = orderReference(receipt.orderId);
   const isCash = receipt.paymentMethod === "cash";
+  const delivery = receipt.delivery || null;
 
   return (
     <section className="order-review order-receipt" aria-labelledby="receipt-title">
@@ -46,8 +47,17 @@ export function OrderReceipt({ receipt, onNewOrder }: { receipt: ReceiptSnapshot
       <dl className="receipt-meta">
         <div><dt>Order reference</dt><dd>{reference}</dd></div>
         <div><dt>Placed</dt><dd>{formatVenueDateTime(receipt.placedAt, true)}</dd></div>
-        <div><dt>Pickup</dt><dd>{receipt.pickupTime ? formatVenueDateTime(receipt.pickupTime) : "As soon as it's ready"}</dd></div>
-        <div><dt>Collect from</dt><dd>{venue.name}, {venue.address}</dd></div>
+        {delivery ? (
+          <>
+            <div><dt>Delivery</dt><dd>{delivery.scheduled ? formatVenueDateTime(delivery.promisedAt) : `As soon as possible, about ${formatVenueTime(delivery.promisedAt)}`}</dd></div>
+            <div><dt>Deliver to</dt><dd>{delivery.address}</dd></div>
+          </>
+        ) : (
+          <>
+            <div><dt>Pickup</dt><dd>{receipt.pickupTime ? formatVenueDateTime(receipt.pickupTime) : "As soon as it's ready"}</dd></div>
+            <div><dt>Collect from</dt><dd>{venue.name}, {venue.address}</dd></div>
+          </>
+        )}
         <div><dt>Name</dt><dd>{receipt.name}</dd></div>
       </dl>
 
@@ -73,6 +83,8 @@ export function OrderReceipt({ receipt, onNewOrder }: { receipt: ReceiptSnapshot
           {receipt.surcharge && toNumber(receipt.surcharge.amount) > 0 ? (
             <div><span>{receipt.surcharge.label || `Public holiday surcharge (${receipt.surcharge.percent}%)`}</span><span>+{formatMoney(receipt.surcharge.amount)}</span></div>
           ) : null}
+          {delivery ? <div><span>Delivery</span><span>{delivery.fee > 0 ? formatMoney(delivery.fee) : "Free"}</span></div> : null}
+          {delivery && delivery.tip > 0 ? <div><span>Tip for the driver</span><span>{formatMoney(delivery.tip)}</span></div> : null}
           <div className="receipt-grand-total"><span>Total</span><strong>{formatMoney(receipt.total)}</strong></div>
           <p>
             Includes GST of {formatMoney(receipt.gst)}
@@ -82,9 +94,13 @@ export function OrderReceipt({ receipt, onNewOrder }: { receipt: ReceiptSnapshot
       </div>
 
       <p className="receipt-payment">
-        {isCash
-          ? <><strong>Pay in store:</strong> please have {formatMoney(receipt.total)} ready when you collect. Show this screen at the counter.</>
-          : <><strong>Paid by card.</strong> Show this screen{receipt.email ? " or your email" : ""} when you collect.</>}
+        {delivery
+          ? isCash
+            ? <><strong>Pay the driver:</strong> please have {formatMoney(receipt.total)} ready when your order arrives.</>
+            : <><strong>Paid by card.</strong> Nothing to pay when it arrives. Follow the driver on your tracking page.</>
+          : isCash
+            ? <><strong>Pay in store:</strong> please have {formatMoney(receipt.total)} ready when you collect. Show this screen at the counter.</>
+            : <><strong>Paid by card.</strong> Show this screen{receipt.email ? " or your email" : ""} when you collect.</>}
       </p>
 
       <div className="order-review-actions receipt-actions">

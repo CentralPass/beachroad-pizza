@@ -1170,3 +1170,72 @@ button:disabled,
 .legal-content li {
   margin-bottom: 6px;
 }
+
+/* Delivery at checkout */
+.fulfilment-choice legend,
+.delivery-address legend,
+.tip-choice legend {
+  margin-bottom: 7px;
+  font-weight: 800;
+}
+
+.fulfilment-choice legend {
+  grid-column: 1 / -1;
+}
+
+.delivery-address,
+.tip-choice {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0;
+  padding: 0;
+  border: 0;
+}
+
+.delivery-fee-note {
+  margin: 0;
+}
+
+.tip-options {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tip-options button,
+.tip-other input {
+  min-height: 46px;
+  border: 1px solid var(--hairline);
+  background: var(--cream);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+}
+
+.tip-options button {
+  cursor: pointer;
+}
+
+.tip-options button.is-selected {
+  background: var(--blue);
+  box-shadow: inset 0 -4px 0 var(--ink);
+}
+
+.tip-other input {
+  width: 100%;
+  padding: 0 10px;
+  text-align: center;
+}
+
+.tracking-driver {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+@media (max-width: 520px) {
+  .tip-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

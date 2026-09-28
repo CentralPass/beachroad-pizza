@@ -30,6 +30,9 @@ export type CartLine = {
 
 type QuoteStatus = "idle" | "loading" | "ready" | "error";
 
+export type Fulfilment = "pickup" | "delivery";
+export type DeliveryPlace = { suburb: string; postcode: string };
+
 type QuoteState = {
   // The cart (items + code) this result was priced for.
   key: string | null;
@@ -63,6 +66,14 @@ type CartContextValue = {
   orderItems: () => Array<{ menu_item_id: number; quantity: number; modifiers: Array<{ modifier_id: number; quantity: number }> }>;
   openCart: () => void;
   closeCart: () => void;
+  // Delivery: priced by the server like everything else, so the fee and tip
+  // shown are the ones charged.
+  fulfilment: Fulfilment;
+  setFulfilment: (value: Fulfilment) => void;
+  deliveryPlace: DeliveryPlace | null;
+  setDeliveryPlace: (place: DeliveryPlace | null) => void;
+  tip: number;
+  setTip: (amount: number) => void;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -76,7 +87,14 @@ export function lineUnitPrice(line: CartLine) {
   return line.item.base_price + line.modifiers.reduce((sum, modifier) => sum + modifier.price_delta, 0);
 }
 
-type Persisted = { lines: CartLine[]; discountCode: string | null; discountData: DiscountCode | null };
+type Persisted = {
+  lines: CartLine[];
+  discountCode: string | null;
+  discountData: DiscountCode | null;
+  fulfilment?: Fulfilment;
+  deliveryPlace?: DeliveryPlace | null;
+  tip?: number;
+};
 
 function readPersisted(): Persisted | null {
   try {
@@ -108,6 +126,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [discountData, setDiscountData] = useState<DiscountCode | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [fulfilment, setFulfilment] = useState<Fulfilment>("pickup");
+  const [deliveryPlace, setDeliveryPlace] = useState<DeliveryPlace | null>(null);
+  const [tip, setTip] = useState(0);
   const [quoteState, setQuoteState] = useState<QuoteState>({ key: null, quote: null, failed: false, blocking: null });
   const sequence = useRef(0);
 
@@ -118,6 +139,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setLines(persisted.lines);
         setDiscountCode(persisted.discountCode);
         setDiscountData(persisted.discountData);
+        if (persisted.fulfilment) setFulfilment(persisted.fulfilment);
+        if (persisted.deliveryPlace) setDeliveryPlace(persisted.deliveryPlace);
+        if (typeof persisted.tip === "number") setTip(persisted.tip);
       }
       // The old static-menu cart used names instead of menu IDs and cannot be priced.
       try {
@@ -133,11 +157,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!loaded) return;
     try {
-      window.sessionStorage.setItem(STORAGE_KEYS.cart, JSON.stringify({ lines, discountCode, discountData }));
+      window.sessionStorage.setItem(STORAGE_KEYS.cart, JSON.stringify({ lines, discountCode, discountData, fulfilment, deliveryPlace, tip }));
     } catch {
       // Private browsing can refuse storage; the cart still works for this page.
     }
-  }, [lines, discountCode, discountData, loaded]);
+  }, [lines, discountCode, discountData, fulfilment, deliveryPlace, tip, loaded]);
 
   const orderItems = useCallback(() => lines.map((line) => ({
     menu_item_id: line.item.id,
@@ -145,7 +169,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     modifiers: line.modifiers.map((modifier) => ({ modifier_id: modifier.id, quantity: 1 })),
   })), [lines]);
 
-  const cartKey = useMemo(() => JSON.stringify([orderItems(), discountCode]), [orderItems, discountCode]);
+  // What the quote depends on. Delivery adds the suburb and the tip.
+  const delivery = fulfilment === "delivery";
+  const quoteExtras = useMemo(() => (delivery
+    ? { order_type: "delivery" as const, delivery: deliveryPlace || undefined, tip: tip || undefined }
+    : {}), [delivery, deliveryPlace, tip]);
+  const cartKey = useMemo(() => JSON.stringify([orderItems(), discountCode, quoteExtras]), [orderItems, discountCode, quoteExtras]);
 
   useEffect(() => {
     if (!loaded || !lines.length) return;
@@ -153,7 +182,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const seq = sequence.current;
     const key = cartKey;
     const timer = window.setTimeout(() => {
-      api.post<Quote>("/api/orders/quote", { items: orderItems(), discount_code: discountCode || undefined })
+      api.post<Quote>("/api/orders/quote", { items: orderItems(), discount_code: discountCode || undefined, ...quoteExtras })
         .then((quote) => {
           if (sequence.current === seq) setQuoteState({ key, quote, failed: false, blocking: null });
         })
@@ -166,7 +195,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         });
     }, QUOTE_DEBOUNCE_MS);
     return () => window.clearTimeout(timer);
-  }, [cartKey, lines.length, discountCode, loaded, orderItems]);
+  }, [cartKey, lines.length, discountCode, loaded, orderItems, quoteExtras]);
 
   const quoteStatus: QuoteStatus = !lines.length
     ? "idle"
@@ -262,7 +291,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     orderItems,
     openCart,
     closeCart,
-  }), [loaded, lines, subtotal, currentQuote, quoteStatus, quoteProblem, discountCode, discountData, isOpen, addItem, changeQuantity, removeLine, removeMenuItem, clearCart, setDiscount, clearDiscount, orderItems, openCart, closeCart]);
+    fulfilment,
+    setFulfilment,
+    deliveryPlace,
+    setDeliveryPlace,
+    tip,
+    setTip,
+  }), [loaded, lines, subtotal, currentQuote, quoteStatus, quoteProblem, discountCode, discountData, isOpen, addItem, changeQuantity, removeLine, removeMenuItem, clearCart, setDiscount, clearDiscount, orderItems, openCart, closeCart, fulfilment, deliveryPlace, tip]);
 
   return (
     <CartContext.Provider value={value}>
@@ -355,6 +390,12 @@ export function QuoteRows({ quote, subtotal, discountCode }: { quote: Quote | nu
       ) : null}
       {surcharge && toNumber(surcharge.amount) > 0 ? (
         <div><span>{surcharge.label || `Public holiday surcharge (${surcharge.percent}%)`}</span><strong>+{formatMoney(surcharge.amount)}</strong></div>
+      ) : null}
+      {quote?.delivery?.available ? (
+        <div><span>Delivery</span><strong>{quote.delivery.fee > 0 ? formatMoney(quote.delivery.fee) : "Free"}</strong></div>
+      ) : null}
+      {quote?.tip_amount ? (
+        <div><span>Tip for the driver</span><strong>{formatMoney(quote.tip_amount)}</strong></div>
       ) : null}
     </>
   );

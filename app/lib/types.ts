@@ -75,6 +75,19 @@ export type SurchargeApplied = {
   label?: string | null;
 };
 
+export type DeliveryQuote = {
+  available: boolean;
+  code?: string;
+  message?: string;
+  fee: number;
+  free?: boolean;
+  minimum?: number;
+  short?: number;
+  free_over?: number | null;
+  tip: number;
+  zone?: { id: number; name: string; travel_minutes: number };
+};
+
 export type Quote = {
   subtotal: number;
   offer_applied: OfferApplied | null;
@@ -82,8 +95,30 @@ export type Quote = {
   discount_amount: number;
   surcharge_applied: SurchargeApplied | null;
   tax_breakdown?: { gst_total: number } | null;
+  delivery_fee?: number;
+  tip_amount?: number;
+  delivery?: DeliveryQuote;
   total: number;
 };
+
+// GET /api/delivery/config: where the venue delivers, and when.
+export type DeliveryTime = { available: boolean; at?: string; minutes?: number; code?: string; message?: string };
+export type DeliveryZone = { id: number; name: string; fee: number; min_order: number; travel_minutes: number; asap: DeliveryTime; slots: string[] };
+export type DeliveryConfig =
+  | { offered: false }
+  | {
+    offered: true;
+    open: boolean;
+    code: string | null;
+    message: string | null;
+    min_order: number;
+    free_over: number | null;
+    cash_on_delivery: boolean;
+    tips_enabled: boolean;
+    window: { start: string; end: string } | null;
+    areas: Array<{ suburb: string; postcode: string; zone_id: number }>;
+    zones: DeliveryZone[];
+  };
 
 export type DiscountCode = {
   code: string;
@@ -129,11 +164,30 @@ export type CreateOrderResponse = {
   surcharge_applied: SurchargeApplied | null;
   tax_summary?: { gst_total: number } | null;
   tracking_url: string | null;
+  delivery?: { promised_at: string; scheduled: boolean; fee: number; tip: number; zone: string };
+};
+
+export type TrackedDelivery = {
+  status: "waiting" | "assigned" | "on_the_way" | "delivered" | "failed" | "cancelled";
+  address: string;
+  suburb: string;
+  leave_at_door: boolean;
+  promised_at: string | null;
+  scheduled: boolean;
+  driver_first_name: string | null;
+  left_at: string | null;
+  delivered_at: string | null;
+  driver_location: { lat: number; lng: number; at: string } | null;
+  cash_due: number;
 };
 
 export type TrackedOrder = {
   order_number: number;
   status: string;
+  order_type?: "pickup" | "delivery" | "table";
+  delivery_fee?: number;
+  tip_amount?: number;
+  delivery?: TrackedDelivery | null;
   pickup_time: string | null;
   placed_at?: string;
   payment: {

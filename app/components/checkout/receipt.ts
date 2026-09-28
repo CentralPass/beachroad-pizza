@@ -23,6 +23,9 @@ export type ReceiptSnapshot = {
   surcharge: SurchargeApplied | null;
   total: number;
   gst: number;
+  // Delivery orders only. Optional so a receipt saved before delivery existed
+  // still opens.
+  delivery?: { address: string; promisedAt: string; scheduled: boolean; fee: number; tip: number } | null;
 };
 
 const KEY = "beach-road-pizza-last-receipt";
