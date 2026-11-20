@@ -21,6 +21,7 @@ declare global {
 // never the real path, so a token can't reach Google.
 const REDACTED_PREFIXES: Array<[string, string]> = [
   ["/track/", "/track/:token"],
+  ["/review/", "/review/:token"],
   ["/bookings/manage/", "/bookings/manage/:token"],
   ["/table", "/table"],
 ];

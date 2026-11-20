@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { venueDate } from "../lib/hours";
 import { SITE_NOTICE } from "../lib/venue";
 
-const PRIVATE = ["/track", "/table", "/bookings/manage", "/checkout"];
+const PRIVATE = ["/track", "/review", "/table", "/bookings/manage", "/checkout"];
 
 /** A time-bound notice (e.g. holiday closure) that removes itself after its end date. */
 export function SiteNotice() {
