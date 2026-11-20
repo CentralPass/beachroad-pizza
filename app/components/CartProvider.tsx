@@ -567,7 +567,7 @@ function CartDrawer() {
   );
 }
 
-const DOCK_HIDDEN = ["/checkout", "/track", "/table", "/bookings/manage"];
+const DOCK_HIDDEN = ["/checkout", "/track", "/review", "/table", "/bookings/manage"];
 
 function CartDock() {
   const pathname = usePathname() || "/";

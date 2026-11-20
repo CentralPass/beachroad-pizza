@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { ADS_ID, trackPageView } from "../lib/analytics";
 
 // Private pages never load the tag at all.
-const NO_TAG = ["/table", "/track", "/bookings/manage"];
+const NO_TAG = ["/table", "/track", "/review", "/bookings/manage"];
 
 /** Optional Google Ads tag. Renders nothing unless NEXT_PUBLIC_GOOGLE_ADS_ID is set. */
 export function GoogleTag() {
