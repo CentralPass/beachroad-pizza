@@ -18,6 +18,9 @@ import { useVenue } from "./providers/VenueProvider";
  */
 
 const EXAMPLE_TOKEN = "example";
+
+/** Off to Google, replacing this page so Back returns to the email, not here. */
+const toGoogle = (url: string) => window.location.replace(url);
 const STAR_WORDS = ["", "Poor", "Not great", "Okay", "Good", "Excellent"];
 
 type Issue = { key: string; label: string };
@@ -73,7 +76,6 @@ export function OrderReview({ token }: { token: string }) {
   const [contact, setContact] = useState({ name: "", phone: "", email: "" });
   const [busy, setBusy] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [googleUrl, setGoogleUrl] = useState<string | null>(null);
   const started = useRef(false);
   const path = `/api/reviews/${encodeURIComponent(token)}`;
   const shopName = review?.venue?.name || venue.name;
@@ -90,11 +92,13 @@ export function OrderReview({ token }: { token: string }) {
     setBusy(true);
     try {
       const result = await api.post<RatingResult>(`${path}/rating`, { rating: n });
-      if (result.next === "google") {
-        setGoogleUrl(result.url || null);
+      if (result.next === "google" && result.url) {
+        // Straight there, so the customer only writes the review once. The
+        // example page goes too, so the shop sees exactly what customers get.
         setStep("google");
-        // Straight there, so the customer only writes the review once.
-        if (!isExample && result.url) window.location.assign(result.url);
+        toGoogle(result.url);
+      } else if (result.next === "google") {
+        setStep("thanks");
       } else if (result.next === "thanks") {
         setStep("thanks");
       } else {
@@ -119,7 +123,9 @@ export function OrderReview({ token }: { token: string }) {
         setContact({ name: data.contact?.name || "", phone: data.contact?.phone || "", email: data.contact?.email || "" });
         if (data.rating) setRating(data.rating);
         if (wantsStop) { setStep("stop"); return; }
-        if (data.state === "google") { setGoogleUrl(data.google_url || null); setStep("google"); return; }
+        // Rated 5 already (opened the email again, or came Back): Google again.
+        if (data.state === "google" && data.google_url) { setStep("google"); toGoogle(data.google_url); return; }
+        if (data.state === "google") { setStep("thanks"); return; }
         if (data.state !== "open") { setStep(data.state); return; }
         if (tapped >= 1 && tapped <= 5) {
           // Used once: a refresh shows the page, not a second answer.
@@ -271,13 +277,7 @@ export function OrderReview({ token }: { token: string }) {
             </form>
           ) : null}
 
-          {step === "google" ? (
-            <>
-              <p className="review-lead">Stoked you enjoyed it. Taking you to Google so you can say so there.</p>
-              {googleUrl ? <a className="button" href={googleUrl}>Write a Google review</a> : null}
-              {isExample ? <p className="form-note">On a real link this opens your Google review page straight away.</p> : null}
-            </>
-          ) : null}
+          {step === "google" ? <p className="review-lead" role="status">Opening Google reviews…</p> : null}
 
           {step === "thanks" ? <p className="review-lead">Stoked you enjoyed it. See you next time!</p> : null}
           {step === "sent" ? (
